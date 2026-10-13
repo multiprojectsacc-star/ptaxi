@@ -131,17 +131,14 @@ export default function PersonalTaxi(){
   {mode==='demo'&&<div className="test-strip"><span/>{mapsMode==='live'?t('Podgląd rezerwacji · rzeczywiste adresy i trasy · płatności testowe','Booking preview · real addresses and routes · test payments'):t('Podgląd rezerwacji · płatności testowe','Booking preview · test payments')}</div>}
 
   {stage===0?<main>
-   <section className="landing-layout container">
+   <section className="home-hero">
+   <img className="hero-photo" src="/images/airport-hero.png" alt={t("Prywatny samochód przy terminalu lotniska","Private vehicle outside an airport terminal")} fetchPriority="high"/>
+   <div className="hero-vignette"/>
+   <div className="landing-layout container">
     <div className="landing-copy">
      <div className="service-label"><Plane size={17}/>{t('Prywatne transfery · Kraków Airport','Private transfers · Kraków Airport')}</div>
-     <h1>{t('Twój transfer.','Your transfer.')}<br/>{t('Twój kierowca.','Your driver.')}<br/><span>{t('Spokojna podróż.','Peace of mind.')}</span></h1>
-     <p className="landing-description">{t('Zarezerwuj wygodny przejazd z lotniska lub na lotnisko. Wybierz adres, poznaj cenę i podróżuj z kierowcą, który czeka właśnie na Ciebie.','Book a comfortable ride to or from the airport. Choose your address, see the fare and travel with a driver who is there for you.')}</p>
-     <div className="landing-assurances">
-      <span><ShieldCheck size={18}/>{t('Cena znana przed rezerwacją','Your fare, agreed upfront')}</span>
-      <span><Plane size={18}/>{t('Monitorowanie przylotu','Flight monitoring')}</span>
-      <span><Clock3 size={18}/>{t('60 minut oczekiwania w cenie','60 minutes of waiting included')}</span>
-      <span><CarFront size={18}/>{t('Samochód tylko dla Ciebie','A vehicle exclusively for you')}</span>
-     </div>
+     <h1>{t('Lądujesz.','You land.')}<br/><span>{t('Resztę zostaw nam.','We take it from here.')}</span></h1>
+     <p className="landing-description">{t('Prywatny transfer z i na Kraków Airport. Bez pośpiechu, bez szukania samochodu. Twój kierowca zajmie się podróżą.','Your private transfer to or from Kraków Airport. No rush, no searching for a car. Your driver takes care of the journey.')}</p>
      <div className="landing-footnote"><span className="airport-code">KRK</span><div><strong>Kraków. Balice.</strong><span>{t('Początek i koniec Twojej podróży.','The beginning and end of your journey.')}</span></div></div>
     </div>
     <div className="booking-column">
@@ -159,6 +156,13 @@ export default function PersonalTaxi(){
       <div className="form-reassurance"><LockKeyhole size={13}/>{t('Prywatny przejazd. Cena za cały samochód.','Private transfer. One price for the whole vehicle.')}</div>
      </form>
     </div>
+   </div>
+   <div className="hero-claims container">
+    <span><ShieldCheck size={22}/><div><strong>{t('Cena znana z góry','Upfront pricing')}</strong><small>{t('Za cały prywatny przejazd','For your entire private transfer')}</small></div></span>
+    <span><Users size={22}/><div><strong>{t('Odbiór z tabliczką','Personal meet & greet')}</strong><small>{t('Kierowca czeka na Ciebie','Your driver is waiting for you')}</small></div></span>
+    <span><Plane size={22}/><div><strong>{t('Monitorowanie lotu','Flight monitoring')}</strong><small>{t('Dopasowujemy odbiór do przylotu','Pickup coordinated with your arrival')}</small></div></span>
+    <span><Clock3 size={22}/><div><strong>{t('60 minut oczekiwania','60 minutes of waiting')}</strong><small>{t('Po przylocie, w cenie transferu','After arrival, included in your fare')}</small></div></span>
+   </div>
    </section>
    <section className="service-details container">
     <div><span className="detail-number">01</span><h3>{t('Odbiór bez szukania','A seamless pickup')}</h3><p>{t('Kierowca czeka w hali przylotów z tabliczką z Twoim nazwiskiem.','Your driver meets you in arrivals with a personalised name sign.')}</p></div>

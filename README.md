@@ -1,6 +1,6 @@
 # Personal Taxi — nowy projekt rezerwacji
 
-Interfejs zbudowany od nowa według sposobu rezerwacji wskazanego przez użytkownika na book.transfeero.com: jasny ekran startowy, pionowy formularz oraz osobne strony wyboru auta, danych pasażera i podsumowania. Oryginalny znak Personal Taxi został zachowany z usuniętym czarnym tłem.
+Interfejs zbudowany od nowa: fotograficzna strona główna z samochodem przy lotnisku, dużym nagłówkiem, korzyściami i pionowym formularzem. Rezerwacja prowadzi przez osobne strony wyboru auta, danych pasażera i podsumowania, zgodnie ze sposobem rezerwacji wskazanym przez użytkownika na book.transfeero.com. Oryginalny znak Personal Taxi został zachowany z usuniętym czarnym tłem.
 
 ## Strony
 
