@@ -280,3 +280,23 @@
 @media(max-width:1599px){.vehicle-wide-inclusions{display:none}}
 @media(min-width:901px) and (max-width:1599px){.vehicle-booking-summary{grid-template-rows:auto auto 1fr auto}.vehicle-summary-stops{align-self:start}.vehicle-summary-total p>span{display:inline;margin-inline:5px}.vehicle-price-details{align-self:start}.vehicle-summary-schedule{display:grid;grid-template-columns:1fr 1.1fr 1fr;grid-column:1/-1;grid-row:4;border-top:1px solid #ececec;padding-top:17px;margin-top:15px;gap:15px}.vehicle-summary-schedule small{font-size:6px;color:#a9a9a9;letter-spacing:.5px;display:block;white-space:nowrap;margin-bottom:6px}.vehicle-summary-schedule strong{font-size:14px;font-weight:500;display:flex;gap:6px;align-items:center;color:#676767}.vehicle-summary-schedule strong>span{color:#ccc;margin-inline:2px}.vehicle-summary-schedule svg{color:#999;stroke-width:1.4}}
 @media(min-width:901px) and (max-height:780px){.vehicle-choice{padding-block:14px;min-height:125px;flex-basis:125px}.vehicle-choice-image img{height:85px}.vehicle-capacity{margin-top:12px}.vehicle-choice-description>p{margin-top:5px}.vehicle-category{margin-bottom:5px}}
+
+/* The homepage photograph extends behind the transparent navigation. */
+.home-screen{position:relative;--home-nav-height:91px;--home-preview-height:0px;--home-overlay-height:calc(var(--home-nav-height) + var(--home-preview-height))}
+.home-screen.home-preview{--home-preview-height:25px}
+.home-screen .site-header{position:absolute;top:0;left:0;width:100%;height:var(--home-nav-height);z-index:40;background:rgba(10,17,23,.24);border-bottom:1px solid #ffffff16;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.home-screen .brand,.home-screen .brand img{background:transparent}
+.home-screen .brand-divider{background:#ffffff30}
+.home-screen .brand-location{color:#d0d4d5}
+.home-screen .locale-button{color:#e6e8e9}
+.home-screen .currency{color:#bec6cb}
+.home-screen .help-button{background:#101a2220;border-color:#ffffff40;color:#eceeef}
+.home-screen .help-button:hover{background:#ffffff12}
+.home-screen .test-strip{position:absolute;top:var(--home-nav-height);left:0;width:100%;height:var(--home-preview-height);z-index:35;background:rgba(14,23,30,.25);color:#b3bec5;border-bottom:1px solid #ffffff0d;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.home-screen .home-hero .landing-layout{padding-top:calc(45px + var(--home-overlay-height));min-height:calc(610px + var(--home-overlay-height))}
+.home-hero+.how-it-works{border-top:1px solid #ffffff0d}
+@media(min-width:1550px){.home-screen .home-hero .landing-layout{padding-top:calc(65px + var(--home-overlay-height));min-height:calc(690px + var(--home-overlay-height))}}
+@media(max-width:1200px){.home-screen .home-hero .landing-layout{padding-top:calc(38px + var(--home-overlay-height));min-height:calc(585px + var(--home-overlay-height))}}
+@media(max-width:950px){.home-screen .home-hero .landing-layout{padding-top:calc(31px + var(--home-overlay-height));min-height:calc(575px + var(--home-overlay-height))}}
+@media(min-width:951px) and (max-height:800px){.home-screen .home-hero .landing-layout{padding-top:calc(24px + var(--home-overlay-height));min-height:calc(510px + var(--home-overlay-height))}}
+@media(max-width:720px){.home-screen{--home-nav-height:76px}.home-screen.home-preview{--home-preview-height:23px}.home-screen .home-hero .landing-layout{padding-top:calc(27px + var(--home-overlay-height));min-height:0}.home-screen .hero-photo{height:calc(570px + var(--home-overlay-height))}.home-screen .site-header{background:rgba(10,17,23,.18)}.home-screen .test-strip{background:rgba(14,23,30,.2)}}

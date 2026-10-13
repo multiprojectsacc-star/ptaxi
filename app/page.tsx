@@ -120,7 +120,7 @@ export default function PersonalTaxi(){
  const totalStatus=result?.status||status?.status;
  const isDemo=(result?.mode||status?.mode)==='demo';
 
- return <div className={'app-shell'+(stage===1?' vehicle-screen':'')}>
+ return <div className={'app-shell'+(stage===0?' home-screen'+(mode==='demo'?' home-preview':''):stage===1?' vehicle-screen':'')}>
   <header className="site-header">
    <div className="header-inner">
     <a className="brand" href="/" onClick={e=>{e.preventDefault();if(!busy)editRoute();}} aria-label="Personal Taxi — strona główna"><img src="/images/logo-transparent.png" alt="Personal Taxi"/><span className="brand-divider"/><span className="brand-location">KRAKÓW AIRPORT</span></a>
@@ -166,11 +166,6 @@ export default function PersonalTaxi(){
     <span><Plane size={22}/><div><strong>{t('Monitorowanie lotu','Flight monitoring')}</strong><small>{t('Dopasowujemy odbiór do przylotu','Pickup coordinated with your arrival')}</small></div></span>
     <span><Clock3 size={22}/><div><strong>{t('60 minut oczekiwania','60 minutes of waiting')}</strong><small>{t('Po przylocie, w cenie transferu','After arrival, included in your fare')}</small></div></span>
    </div>
-   </section>
-   <section className="service-details container">
-    <div><span className="detail-number">01</span><h3>{t('Odbiór bez szukania','A seamless pickup')}</h3><p>{t('Kierowca czeka w hali przylotów z tabliczką z Twoim nazwiskiem.','Your driver meets you in arrivals with a personalised name sign.')}</p></div>
-    <div><span className="detail-number">02</span><h3>{t('Twój lot pod kontrolą','We follow your flight')}</h3><p>{t('Podaj numer lotu. Monitorujemy przylot i organizujemy odbiór.','Add your flight number. We track your arrival and arrange the pickup.')}</p></div>
-    <div><span className="detail-number">03</span><h3>{t('Komfort dla całej grupy','Room for everyone')}</h3><p>{t('Sedan, Premium lub Mini Van — wybierz samochód dla maksymalnie 8 osób.','Sedan, Premium or Mini Van — choose a vehicle for up to 8 passengers.')}</p></div>
    </section>
    <HowItWorks lang={lang}/>
    <section className="information-row container"><div><span className="section-kicker">{t('PRZED PODRÓŻĄ','BEFORE YOU TRAVEL')}</span><h2>{t('Wszystko, co warto wiedzieć.','Good to know before you go.')}</h2><p>{t('Masz inne pytanie? Jesteśmy pod telefonem.','Another question? Give us a call.')}</p><a href="tel:+48690048080"><Phone size={16}/>+48 690 04 80 80<ArrowUpRight size={16}/></a></div><div className="answers">{[
