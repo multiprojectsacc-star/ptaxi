@@ -7,6 +7,7 @@ import {request,localWarsaw,warsawISO,displayDate,emptyDetails,type Trip,type Qu
 import AddressInput from '@/components/booking/AddressInput';
 import DeparturePicker from '@/components/booking/DeparturePicker';
 import RouteMap from '@/components/booking/RouteMap';
+import HowItWorks from '@/components/HowItWorks';
 
 const initialTrip:Trip={direction:'from-airport',location:null,departure:'',passengers:2,luggage:2};
 type BookingResult={bookingId:string;status:string;statusToken:string;paymentUrl:string|null;mode:'demo'|'live'};
@@ -169,6 +170,7 @@ export default function PersonalTaxi(){
     <div><span className="detail-number">02</span><h3>{t('Twój lot pod kontrolą','We follow your flight')}</h3><p>{t('Podaj numer lotu. Monitorujemy przylot i organizujemy odbiór.','Add your flight number. We track your arrival and arrange the pickup.')}</p></div>
     <div><span className="detail-number">03</span><h3>{t('Komfort dla całej grupy','Room for everyone')}</h3><p>{t('Sedan, Premium lub Mini Van — wybierz samochód dla maksymalnie 8 osób.','Sedan, Premium or Mini Van — choose a vehicle for up to 8 passengers.')}</p></div>
    </section>
+   <HowItWorks lang={lang}/>
    <section className="information-row container"><div><span className="section-kicker">{t('PRZED PODRÓŻĄ','BEFORE YOU TRAVEL')}</span><h2>{t('Wszystko, co warto wiedzieć.','Good to know before you go.')}</h2><p>{t('Masz inne pytanie? Jesteśmy pod telefonem.','Another question? Give us a call.')}</p><a href="tel:+48690048080"><Phone size={16}/>+48 690 04 80 80<ArrowUpRight size={16}/></a></div><div className="answers">{[
     [t('Czy mogę wybrać adres poza Krakowem?','Can I travel outside Kraków?'),t('Tak. Wyszukiwarka obejmuje miejscowości i adresy w Polsce. Jeden koniec trasy to zawsze lotnisko Kraków Balice. Nie stosujemy sztywnego limitu kilometrów.','Yes. Search covers towns and addresses throughout Poland. One end of the journey is always Kraków Airport. There is no fixed distance limit.')],
     [t('Z jakim wyprzedzeniem zarezerwować przejazd?','How far ahead should I book?'),t('Minimum 16 godzin przed odbiorem. Wcześniejszy przejazd możesz ustalić telefonicznie, zależnie od dostępności. Wszystkie godziny podajemy w czasie polskim.','At least 16 hours before pickup. Call us for a sooner transfer, subject to availability. All times use Poland local time.')],
