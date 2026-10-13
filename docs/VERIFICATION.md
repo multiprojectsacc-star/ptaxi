@@ -1,12 +1,13 @@
-# Weryfikacja — 13 października 2026
+# Weryfikacja nowego projektu — 13 października 2026
 
-- 11 testów jednostkowych reguł rezerwacji i podpisów P24: zaliczone.
-- TypeScript bez błędów; build Vinext zakończony powodzeniem.
-- Test API demo: trasa Zakopane 112,4 km, brak limitu 60 km, wycena 793 zł dla vana, odrzucenie zbyt małego auta i terminu poniżej 16 h, odrzucenie podmienionego ID adresu, cena i status ustalone przez serwer, zapis kompletu danych, brak podwójnej rezerwacji, odczyt przez losowy token, blokada callbacku w demo.
-- Przeglądarka: wyszukanie Hotelu Starego, wybór Premium 169 zł, formularz pasażera, podsumowanie, zapis rezerwacji demonstracyjnej i odczyt po pełnym odświeżeniu.
-- Widoki 390 × 844 i 1440 × 1000: brak poziomego przepełnienia w widoku mobilnym, wszystkie obrazy załadowane; sprawdzony przełącznik PL/EN.
-- `tests/api-smoke.mjs` uruchamiać wyłącznie na trybie demo, po migracji lokalnej D1.
+Projekt zastępuje poprzednią propozycję. Nowy interfejs ma jasny ekran startowy, pionowy formularz i osobne adresy stron rezerwacji. Wybór auta nie korzysta z modala.
 
-Nie wykonano prawdziwej płatności, zapytania produkcyjnego TomTom ani wysyłki przez Resend. Integracje wymagają konfiguracji środowiska i próby P24 sandbox przed udostępnieniem rzeczywistych rezerwacji.
+- Klucz TomTom z oryginalnego projektu zweryfikowany bez ujawnienia wartości; skonfigurowany jako sekret serwera.
+- `Opole` zwraca miejscowość. `Opole, Ozimska 2` zwraca `Ozimska 2, 45-057 Opole`.
+- Rzeczywista trasa Kraków Airport → Ozimska 2: około 179,9 km i 105 min w chwili testu. Trasa powrotna również wyznaczana przez TomTom. Cena wynika z odzyskanego cennika.
+- Test integracyjny `tests/live-maps.integration.mjs`: wyszukiwanie, routing, cena serwera i zapis testowej rezerwacji — zaliczone.
+- 11 testów reguł i podpisów płatności — zaliczone.
+- TypeScript i build — zaliczone.
+- Przeglądarka: adres, wybór Premium na `/rezerwacja/samochod`, przejście do `/rezerwacja/dane`, odświeżenie oraz przyciski Wstecz/Dalej przywracają ekran i trasę.
 
-Obraz `public/images/airport-transfer.png` został wygenerowany przez ImageGen na potrzeby tej propozycji; jest ilustracją transferu, nie dokumentacją faktycznej floty lub terminalu. Logo i zdjęcia klas pojazdów pochodzą z dostarczonego projektu.
+Płatności pozostają testowe. Nie wykonano rzeczywistej płatności ani wysyłki e-maila.

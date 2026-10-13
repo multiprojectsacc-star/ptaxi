@@ -20,7 +20,7 @@ const airportQuery = (value:string) => /airport|lotnisk|port lotnic|balice|\bkrk
 
 export async function searchLocations(query:string,c:Config):Promise<Location[]> {
   if (airportQuery(query)) return [AIRPORT];
-  if (c.mode === "demo") {
+  if (c.mapsMode === "demo" && c.mode === "demo") {
     const q=fold(query);
     return DEMO_LOCATIONS.filter(l=>fold(`${l.name} ${l.address}`).includes(q)).slice(0,7);
   }
@@ -51,11 +51,12 @@ export async function searchLocations(query:string,c:Config):Promise<Location[]>
 
 export async function resolveLocation(id:string,c:Config):Promise<Location>{
   if(id===AIRPORT.id) return AIRPORT;
-  if(c.mode==="demo"){
+  if(c.mapsMode==="demo" && c.mode==="demo"){
     const location=DEMO_LOCATIONS.find(l=>l.id===id);
     if(!location)throw new ApiError(422,"SELECT_LOCATION","Wybierz adres z listy podpowiedzi.");
     return location;
   }
+  if(id.startsWith("demo-"))throw new ApiError(422,"SELECT_LOCATION","Wyszukaj adres ponownie i wybierz rzeczywistą lokalizację z listy.");
   const [row]=await getDb().select().from(locations).where(eq(locations.id,id)).limit(1);
   if(!row||row.expiresAt<Date.now()) throw new ApiError(422,"SELECT_LOCATION","Wyszukaj ponownie adres i wybierz go z listy.");
   return JSON.parse(row.payload) as Location;
@@ -63,7 +64,7 @@ export async function resolveLocation(id:string,c:Config):Promise<Location>{
 
 const DEMO_ROUTES:Record<string,[number,number]>={"demo-rynek":[17.2,29],"demo-kazimierz":[21.4,31],"demo-dworzec":[17.8,28],"demo-wieliczka":[27.7,31],"demo-zakopane":[112.4,106],"demo-auschwitz":[58.8,58],"demo-hotel":[16.9,28],"demo-hilton":[20.6,29]};
 export async function calculateRoute(from:Location,to:Location,departureAt:string,c:Config){
-  if(c.mode==="demo"){
+  if(c.mapsMode==="demo" && c.mode==="demo"){
     const point=from.id===AIRPORT.id?to:from;
     const [distanceKm,durationMinutes]=DEMO_ROUTES[point.id]||[20,30];
     return {distanceKm,durationMinutes,routePoints:[[from.lat,from.lng],[to.lat,to.lng]] as [number,number][]};

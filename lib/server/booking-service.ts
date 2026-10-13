@@ -8,7 +8,7 @@ import { ApiError, quoteSchema, bookingSchema, assertLeadTime, assertPassengerCa
 import { registerPayment } from "./payments";
 
 export type StoredQuote = QuoteInput & {
-  quoteId:string;expiresAt:number;mode:"demo"|"live";distanceKm:number;durationMinutes:number;amount:number;
+  quoteId:string;expiresAt:number;mode:"demo"|"live";mapsMode:"demo"|"live";mapProvider:"demo"|"tomtom";distanceKm:number;durationMinutes:number;amount:number;
   from:Location;to:Location;routePoints:[number,number][];radiusKm:number;
   offers:{vehicleId:string;amount:number;available:boolean}[];
 };
@@ -23,7 +23,7 @@ export async function createQuote(raw:unknown){
   assertServiceArea(AIRPORT,location,c.radiusKm);
   const [from,to]=input.direction==="from-airport"?[AIRPORT,location]:[location,AIRPORT];
   const route=await calculateRoute(from,to,input.departureAt,c);
-  const quote:StoredQuote={...input,location,combi:input.vehicleId==="van"?false:input.combi,quoteId:crypto.randomUUID(),expiresAt:Date.now()+15*60_000,mode:c.mode,...route,amount:calculatePrice(route.distanceKm,input.vehicleId),from,to,radiusKm:c.radiusKm,offers:VEHICLES.map(v=>({vehicleId:v.id,amount:calculatePrice(route.distanceKm,v.id),available:input.passengers<=v.passengers&&input.luggage<=v.mediumLuggage}))};
+  const quote:StoredQuote={...input,location,combi:input.vehicleId==="van"?false:input.combi,quoteId:crypto.randomUUID(),expiresAt:Date.now()+15*60_000,mode:c.mode,mapsMode:c.mapsMode,mapProvider:c.mapProvider,...route,amount:calculatePrice(route.distanceKm,input.vehicleId),from,to,radiusKm:c.radiusKm,offers:VEHICLES.map(v=>({vehicleId:v.id,amount:calculatePrice(route.distanceKm,v.id),available:input.passengers<=v.passengers&&input.luggage<=v.mediumLuggage}))};
   await getDb().insert(quotes).values({id:quote.quoteId,mode:c.mode,payload:JSON.stringify(quote),amount:quote.amount,currency:input.currency,expiresAt:quote.expiresAt,createdAt:Date.now()});
   return quote;
 }

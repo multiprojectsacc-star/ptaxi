@@ -6,6 +6,8 @@ export function config() {
   const radius = Number(env.SERVICE_RADIUS_KM || 0);
   return {
     mode,
+    mapsMode: env.TOMTOM_API_KEY ? "live" as const : "demo" as const,
+    mapProvider: env.TOMTOM_API_KEY ? "tomtom" as const : "demo" as const,
     radiusKm: Number.isFinite(radius) && radius >= 0 && radius <= 1000 ? radius : 0,
     tomtomKey: env.TOMTOM_API_KEY,
     appUrl: env.APP_URL?.replace(/\/$/, ""),
