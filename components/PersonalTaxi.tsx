@@ -158,7 +158,7 @@ export default function PersonalTaxi(){
       <DeparturePicker value={trip.departure} onChange={departure=>changeTrip({departure})} lang={lang} disabled={busy}/>
       <div className="counts-row"><Counter label={t('Pasażerowie','Passengers')} icon={<Users size={19}/>} value={trip.passengers} min={1} max={8} disabled={busy} onChange={passengers=>changeTrip({passengers})}/><Counter label={t('Walizki','Suitcases')} icon={<Luggage size={19}/>} value={trip.luggage} min={0} max={7} disabled={busy} onChange={luggage=>changeTrip({luggage})}/></div>
       {error&&<div className="inline-error" role="alert"><Info size={17}/>{error}</div>}
-      <button className="button yellow search-button" disabled={busy}>{busy?<><LoaderCircle className="spin" size={19}/>{t('Wyznaczam trasę…','Calculating your route…')}</>:<>{t('Zobacz dostępne auta i ceny','See vehicles & prices')}<ArrowRight size={19}/></>}</button>
+      <button className="button yellow search-button" disabled={busy}>{busy?<><LoaderCircle className="spin" size={19}/>{t('Wyznaczam trasę…','Calculating your route…')}</>:<><span className="search-label-desktop">{t('Zobacz dostępne auta i ceny','See vehicles & prices')}</span><span className="search-label-mobile">{t('Sprawdź cenę','See prices')}</span><ArrowRight size={19}/></>}</button>
       <div className="form-reassurance"><LockKeyhole size={13}/>{t('Prywatny przejazd. Cena za cały samochód.','Private transfer. One price for the whole vehicle.')}</div>
      </form>
     </div>

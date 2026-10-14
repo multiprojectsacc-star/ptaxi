@@ -46,8 +46,47 @@
 @media(min-width:1550px){.home-hero .landing-layout{min-height:690px;padding-top:65px;padding-bottom:45px;gap:95px}.home-hero .landing-copy{padding-top:54px}.home-hero .landing-copy h1{font-size:65px}.home-hero .landing-description{font-size:15px}.home-hero .booking-column{max-width:520px}.home-hero .booking-field{min-height:73px}.home-hero .counter-field{min-height:79px}.hero-claims{padding-top:26px}.hero-claims strong{font-size:13px}.hero-claims small{font-size:10px}}
 @media(max-width:1200px){.home-hero .landing-layout{gap:45px;min-height:585px;padding-top:38px;padding-bottom:31px;grid-template-columns:1fr 1fr}.home-hero .landing-copy{padding-top:38px}.home-hero .landing-copy h1{font-size:49px;letter-spacing:-2px}.home-hero .landing-description{font-size:13px;max-width:365px}.home-hero .booking-column{max-width:480px}.hero-claims{gap:15px}.hero-claims>span{gap:10px}.hero-claims strong{font-size:10px}.hero-claims small{font-size:8px}.hero-claims>span>svg{width:20px}}
 @media(max-width:950px){.home-hero .landing-layout{gap:27px;padding-top:31px;min-height:575px}.home-hero .landing-copy{padding-top:38px}.home-hero .landing-copy h1{font-size:42px;letter-spacing:-1.7px}.home-hero .landing-description{font-size:12px;max-width:320px;line-height:1.8}.home-hero .service-label{font-size:8px;letter-spacing:.8px}.home-hero .landing-footnote{display:flex;margin-top:21px}.home-hero .landing-footnote div>span{max-width:200px}.home-hero .booking-column{max-width:none}.home-hero .service-tabs button{padding:9px 12px;font-size:10px}.hero-claims{grid-template-columns:1fr 1fr;gap:19px 30px;padding-top:23px}.hero-claims strong{font-size:11px}.hero-claims small{font-size:9px}.home-hero{padding-bottom:26px}.hero-photo{object-position:35% 70%}}
-@media(max-width:720px){.home-hero{background:#172026;padding-bottom:29px;overflow:hidden}.hero-photo{height:570px;object-position:28% 90%;object-fit:cover}.hero-vignette{background:linear-gradient(180deg,rgba(9,16,22,.6) 0%,rgba(9,16,22,.25) 18%,rgba(9,16,22,.05) 30%,#172026 48%,#172026 100%)}.home-hero .landing-layout{grid-template-columns:1fr;gap:0;min-height:0;padding-top:27px;padding-bottom:30px}.home-hero .landing-copy{padding-top:0;min-height:0;max-width:none;padding-bottom:22px}.home-hero .service-label{font-size:8px;margin-bottom:12px;letter-spacing:.8px}.home-hero .landing-copy h1{font-size:clamp(32px,9.2vw,40px);letter-spacing:-1.4px;line-height:1.13;max-width:none}.home-hero .landing-description{font-size:12px;line-height:1.7;margin-top:14px;max-width:340px}.home-hero .landing-footnote{display:none}.home-hero .booking-column{max-width:none;margin-top:0}.home-hero .service-tabs{background:#0e171fb3;border-color:#c8b18631;margin-bottom:12px}.home-hero .service-tabs button{font-size:11px;padding:10px 14px}.home-hero .trip-form{padding:12px;background:#fff;border-radius:12px;box-shadow:0 15px 35px #0003}.home-hero .form-intro{padding-bottom:16px}.home-hero .booking-field{min-height:73px}.home-hero .counter-field{min-height:77px}.home-hero .search-button{font-size:13px;min-height:49px}.hero-claims{grid-template-columns:1fr 1fr;gap:21px 20px;padding-top:23px}.hero-claims>span{align-items:flex-start;gap:10px}.hero-claims>span>svg{width:19px;margin-top:1px}.hero-claims strong{font-size:10px;line-height:1.7}.hero-claims small{font-size:8px;line-height:1.75}.test-strip{font-size:6.5px}.home-hero+.service-details{padding-top:31px}}
-@media(max-width:390px){.home-hero .landing-copy h1{letter-spacing:-1.2px}.home-hero .landing-description{font-size:11px;max-width:315px}.hero-claims{gap:20px 14px}.hero-claims>span{gap:8px}.hero-claims strong{font-size:9px}.hero-claims small{font-size:7.5px}.home-hero .service-tabs button{font-size:10px}}
+/* Mobile booking starts directly below the headline, over the same photograph. */
+.search-label-mobile{display:none}
+@media(max-width:720px){
+ .home-hero{background:#172026;padding-bottom:25px;overflow:hidden}
+ .home-hero .hero-photo{height:100%;object-position:44% center}
+ .home-hero .hero-vignette{background:linear-gradient(180deg,rgba(9,16,22,.68),rgba(9,16,22,.3) 38%,rgba(9,16,22,.55) 100%)}
+ .home-hero .landing-layout{grid-template-columns:1fr;gap:0;min-height:0;padding-bottom:20px}
+ .home-hero .landing-copy{padding:0 0 20px;min-height:0;max-width:none}
+ .home-hero .service-label,.home-hero .landing-description,.home-hero .landing-footnote{display:none}
+ .home-hero .landing-copy h1{font-size:clamp(29px,8.8vw,38px);letter-spacing:-1.3px;line-height:1.12;max-width:none}
+ .home-hero .booking-column{max-width:none;margin:0}
+ .home-hero .service-tabs{display:flex;width:100%;padding:4px;gap:4px;border-radius:12px;background:#fffffff2;border:1px solid #fff8;backdrop-filter:blur(10px);margin-bottom:11px}
+ .home-hero .service-tabs button{flex:1;justify-content:center;min-height:42px;padding:10px 8px;font-size:13px;font-weight:550;color:#5d625f;border-radius:8px;white-space:nowrap}
+ .home-hero .service-tabs .active{background:#293b3e;color:#f4d6a3}
+ .home-hero .trip-form{padding:10px;background:#fff;border:1px solid #e5e4de;border-radius:17px;box-shadow:0 15px 35px #0003;backdrop-filter:none}
+ .home-hero .booking-field{min-height:67px;padding:11px 13px;gap:12px;border-radius:11px;background:#fff;border-color:#dedfd8}
+ .home-hero .booking-field label,.home-hero .booking-field small{font-size:11px;color:#777d72}
+ .home-hero .booking-field strong,.home-hero .address-field input{font-size:16px;line-height:1.5;font-weight:500}
+ .home-hero .address-field input::placeholder{color:#7d8278}
+ .home-hero .airport-field p{font-size:9px;color:#899084}
+ .home-hero .airport-field strong>span{font-size:8px;background:#f3f0e8;color:#8d774e}
+ .home-hero .address-field div>small{font-size:9px;margin-top:2px}
+ .home-hero .calendar-popup{position:static;margin-top:8px;box-shadow:none;border-color:#dedfd8;border-radius:11px}
+ .home-hero .booking-field>svg:first-child{color:#9a9d8f}
+ .home-hero .counts-row{gap:8px}
+ .home-hero .counter-field{min-height:82px;padding:10px 12px;border-radius:11px;border-color:#dedfd8}
+ .home-hero .counter-field>div:first-child{font-size:11px;color:#777d72;gap:6px}
+ .home-hero .counter-actions{justify-content:space-between;gap:0;margin-top:7px}
+ .home-hero .counter-actions button{width:32px;height:32px;color:#626e64}
+ .home-hero .counter-actions output{font-size:16px;min-width:18px}
+ .home-hero .search-button{font-size:15px;min-height:53px;border-radius:10px;margin-top:10px;background:#edc17d;gap:14px}
+ .home-hero .search-button:hover:not(:disabled){background:#e4b469}
+ .home-hero .search-label-desktop{display:none}
+ .home-hero .search-label-mobile{display:inline}
+ .home-hero .form-reassurance{font-size:9px;line-height:1.6;padding:10px 0 1px;color:#7b8476;gap:6px}
+ .home-hero .hero-claims{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 18px;border:0;padding-top:0;text-align:center}
+ .home-hero .hero-claims>span{display:inline-flex;gap:0}
+ .home-hero .hero-claims>span>svg,.home-hero .hero-claims small{display:none}
+ .home-hero .hero-claims strong{font-size:10px;line-height:1.6;font-weight:450;color:#e5e6df}
+ .home-hero+.service-details{padding-top:31px}
+}
 @media(min-width:951px) and (max-height:800px){.home-hero .landing-layout{padding-top:27px;padding-bottom:27px;min-height:558px}.home-hero .landing-copy{padding-top:37px}.home-hero .landing-copy h1{font-size:52px}.home-hero .landing-description{font-size:13px;margin-top:19px}.home-hero .landing-footnote{margin-top:23px}.hero-claims{padding-top:21px}.home-hero{padding-bottom:25px}}
 .home-hero .form-intro{display:none}
 @media(min-width:951px) and (max-height:800px){.home-hero .landing-layout{min-height:510px;padding-top:24px;padding-bottom:22px}.hero-claims{padding-top:19px}.home-hero{padding-bottom:23px}}
@@ -301,7 +340,28 @@
 @media(max-width:1200px){.home-screen .home-hero .landing-layout{padding-top:calc(38px + var(--home-overlay-height));min-height:calc(585px + var(--home-overlay-height))}}
 @media(max-width:950px){.home-screen .home-hero .landing-layout{padding-top:calc(31px + var(--home-overlay-height));min-height:calc(575px + var(--home-overlay-height))}}
 @media(min-width:951px) and (max-height:800px){.home-screen .home-hero .landing-layout{padding-top:calc(24px + var(--home-overlay-height));min-height:calc(510px + var(--home-overlay-height))}}
-@media(max-width:720px){.home-screen{--home-nav-height:76px}.home-screen.home-preview{--home-preview-height:23px}.home-screen .home-hero .landing-layout{padding-top:calc(18px + var(--home-overlay-height));min-height:0}.home-screen .hero-photo{height:calc(570px + var(--home-overlay-height))}.home-screen .site-header{background:rgba(10,17,23,.18)}.home-screen .test-strip{background:rgba(14,23,30,.2)}}
+@media(max-width:720px){
+ .home-screen{--home-nav-height:72px}
+ .home-screen.home-preview{--home-preview-height:20px}
+ .home-screen .header-inner,.home-screen .container{width:calc(100% - 32px)}
+ .home-screen .header-inner{gap:14px}
+ .home-screen .brand img{width:156px;height:54px}
+ .home-screen .header-actions{gap:10px}
+ .home-screen .locale-button{min-height:44px;font-size:12px;gap:6px}
+ .home-screen .currency{display:none}
+ .home-screen .help-button{width:44px;height:44px;padding:0;justify-content:center}
+ .home-screen .home-hero .landing-layout{padding-top:calc(13px + var(--home-overlay-height));min-height:0}
+ .home-screen .hero-photo{height:100%}
+ .home-screen .site-header{background:rgba(10,17,23,.08);border:0;backdrop-filter:none;-webkit-backdrop-filter:none}
+ .home-screen .test-strip{background:rgba(14,23,30,.16);font-size:7px;letter-spacing:0}
+}
+@media(max-width:350px){
+ .home-screen .brand img{width:142px}
+ .home-hero .booking-field{padding-inline:11px;gap:9px}
+ .home-hero .counter-field{padding-inline:10px}
+ .home-hero .service-tabs button{font-size:12px}
+ .home-hero .form-reassurance{font-size:8px}
+}
 
 /* Passenger details and review share the same wide journey workspace. */
 .details-screen{background:#f6f5f1}
