@@ -303,7 +303,7 @@
 @media(min-width:951px) and (max-height:800px){.home-screen .home-hero .landing-layout{padding-top:calc(24px + var(--home-overlay-height));min-height:calc(510px + var(--home-overlay-height))}}
 @media(max-width:720px){.home-screen{--home-nav-height:76px}.home-screen.home-preview{--home-preview-height:23px}.home-screen .home-hero .landing-layout{padding-top:calc(27px + var(--home-overlay-height));min-height:0}.home-screen .hero-photo{height:calc(570px + var(--home-overlay-height))}.home-screen .site-header{background:rgba(10,17,23,.18)}.home-screen .test-strip{background:rgba(14,23,30,.2)}}
 
-/* Passenger details: a wide journey column beside the booking form. */
+/* Passenger details and review share the same wide journey workspace. */
 .details-screen{background:#f6f5f1}
 .details-screen .site-header{height:86px;flex-shrink:0}
 .details-screen .header-inner{width:calc(100% - 56px);max-width:none;gap:24px}
@@ -395,3 +395,41 @@
 @media(max-width:1100px){.details-workspace{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:22px}.details-content .screen-heading h1{font-size:31px}.details-form .form-section{padding:22px}.details-form .invoice-section{padding-block:18px}.details-form .input-grid{gap:19px 17px}.details-form .input-grid input,.details-form .input-grid textarea{font-size:13px;padding:12px}.details-form-heading p{font-size:10px}.details-selected-vehicle{gap:12px}.details-selected-vehicle>img{width:78px}.details-selected-vehicle h3{font-size:15px}.details-journey-heading h2{font-size:21px}.details-journey-total strong{font-size:29px}.details-screen .vehicle-header-steps{gap:18px}.details-screen .vehicle-header-steps>span{font-size:10px}.details-screen .help-button{font-size:0;padding:10px;gap:0}.details-screen .help-button>svg:last-child{display:none}.details-form .screen-actions>.button{min-width:215px}}
 @media(max-width:900px){.details-screen .site-header{height:auto}.details-screen .header-inner{width:calc(100% - 40px);display:grid;grid-template-columns:1fr auto;grid-template-rows:76px 46px;gap:0}.details-screen .brand img{width:154px;height:55px}.details-screen .header-actions{grid-column:2;grid-row:1;gap:17px}.details-screen .vehicle-header-steps{grid-column:1/-1;grid-row:2;gap:20px;justify-content:space-between}.details-screen .vehicle-header-steps>span{font-size:10px;padding-top:0;gap:6px}.details-screen .vehicle-header-steps small{font-size:8px}.details-workspace{display:flex;flex-direction:column;gap:32px;padding:27px 20px 0}.details-content{order:0;width:100%}.details-journey{order:1;width:100%}.details-map{height:300px}.details-content .screen-heading h1{font-size:33px}.details-form .form-section{padding:25px}.details-form .invoice-section{padding-block:20px}.details-form .input-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}.details-form .input-grid label{font-size:12px}.details-form .input-grid input,.details-form .input-grid textarea{font-size:16px;padding:12px 14px}.details-form-heading p{font-size:11px}.details-form .input-grid small{font-size:10px}.details-form .input-grid label:nth-child(3),.details-form .input-grid label:nth-child(4){grid-column:1/-1}.details-form .screen-actions>.button{width:auto}.details-form .screen-actions .back-link{justify-content:flex-start}.details-journey-heading h2{font-size:24px}.details-selected-vehicle>img{width:110px;height:70px}.details-selected-vehicle h3{font-size:18px}.details-journey-total strong{font-size:34px}.details-route strong{font-size:14px}}
 @media(max-width:600px){.details-workspace{padding:23px 16px 0;gap:30px}.details-screen .header-inner{width:calc(100% - 32px)}.details-content .screen-heading h1{font-size:31px}.details-content .screen-heading p{font-size:12px}.details-content .screen-heading{margin-bottom:22px}.details-form .form-section{padding:21px 19px;margin-bottom:15px}.details-form .invoice-section{padding-block:18px}.details-form-heading{align-items:flex-start;gap:11px;margin-bottom:21px}.details-form-heading>span{width:30px;height:30px;margin-top:1px}.details-form-heading h2{font-size:16px}.details-form-heading p{font-size:10px}.details-form .input-grid{grid-template-columns:minmax(0,1fr);gap:18px}.details-form .input-grid label:nth-child(3),.details-form .input-grid label:nth-child(4),.details-form .input-grid .wide{grid-column:auto}.details-form .input-grid label>span{font-size:9px}.details-form .screen-actions{flex-direction:column-reverse;align-items:stretch;gap:15px}.details-form .screen-actions>.button{width:100%;min-width:0}.details-form .screen-actions .back-link{justify-content:center;padding:8px}.details-next-note{font-size:10px;align-items:flex-start;margin:21px 0 17px}.details-journey-heading,.details-journey-meta,.details-route,.details-selected-vehicle,.details-journey-included{margin-inline:20px}.details-journey-heading{gap:10px}.details-journey-heading .section-kicker{font-size:6px;letter-spacing:.9px}.details-journey-heading>button{font-size:9px;gap:5px}.details-journey-heading h2{font-size:22px}.details-journey-total{padding:21px 20px}.details-journey-total strong{font-size:30px}.details-journey-total span{font-size:11px}.details-map{height:255px}.details-route>li{gap:10px}.details-route strong{font-size:12px}.details-journey-help small{font-size:9px}}
+
+.checkout-card{border:1px solid #e0dfd7;border-radius:15px;padding:27px 28px;background:#fff;margin-bottom:18px}
+.checkout-card-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:23px}
+.checkout-card-heading .details-form-heading{margin-bottom:0}
+.checkout-edit{display:flex;align-items:center;gap:7px;padding:8px 0;color:#7d826f;font-size:10px;white-space:nowrap;flex-shrink:0}
+.checkout-edit:hover{color:#947441}
+.checkout-passenger-name{font-size:24px;line-height:1.4;font-weight:500;letter-spacing:-.45px;color:#344336;margin-bottom:19px;overflow-wrap:anywhere}
+.checkout-contact-grid,.checkout-extras-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 28px;margin:0}
+.checkout-contact-grid>div,.checkout-extras-grid>div{min-width:0}
+.checkout-contact-grid dt,.checkout-extras-grid dt{font-size:10px;line-height:1.7;color:#7a856f;font-weight:400;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.checkout-contact-grid dt>svg{stroke-width:1.5;color:#98a18b;flex-shrink:0}
+.checkout-contact-grid dd,.checkout-extras-grid dd{font-size:13px;line-height:1.8;color:#3e4c3e;margin:0;overflow-wrap:anywhere;white-space:pre-line}
+.checkout-extras-grid .wide{grid-column:1/-1}
+.checkout-empty-note{font-size:12px;line-height:1.8;color:#7d8973;padding:3px 0 5px}
+.checkout-invoice{margin-top:24px;padding-top:21px;border-top:1px solid #e9e9df}
+.checkout-invoice h3{font-size:13px;font-weight:550;color:#54624b;margin-bottom:17px}
+.checkout-payment>.details-form-heading{margin-bottom:24px}
+.checkout-total{display:flex;align-items:center;justify-content:space-between;gap:24px;border:1px solid #e4dfd0;background:#f8f6ee;border-radius:9px;padding:20px 22px;color:#34473b}
+.checkout-total span{font-size:12px;display:block;font-weight:500}
+.checkout-total small{font-size:10px;line-height:1.6;color:#879075;display:block;margin-top:5px}
+.checkout-total strong{font-size:36px;font-weight:550;letter-spacing:-1px;line-height:1.3;white-space:nowrap}
+.checkout-payment .demo-information{margin:19px 0 0;padding:15px 17px;background:#f7f5ef;border-color:#e5e0d3;color:#8c7c58;border-radius:8px;gap:11px}
+.checkout-payment .demo-information>svg{margin-top:2px;stroke-width:1.6}
+.checkout-payment .demo-information strong{font-size:11px;color:#837143}
+.checkout-payment .demo-information p{font-size:11px;color:#827c68;line-height:1.8}
+.checkout-payment .terms-consent{font-size:12px;line-height:1.9;color:#6f7b64;gap:11px;margin:22px 0}
+.checkout-payment .terms-consent input{width:18px;height:18px;margin-top:3px;accent-color:#967a45}
+.checkout-payment .terms-consent button{color:#6e774d;text-underline-offset:3px}
+.checkout-submit{display:flex;width:100%;min-height:54px;background:#263a3d;color:#f9f8f1;font-size:12px;font-weight:500;border-radius:9px;box-shadow:0 5px 12px #263a3d10}
+.checkout-submit:hover:not(:disabled){background:#3b5351}
+.checkout-submit>svg{color:#e0c18d}
+.checkout-payment .secure-payment{justify-content:center;font-size:10px;line-height:1.7;color:#8c947f;margin-top:16px;flex-wrap:wrap;gap:7px}
+.checkout-payment .secure-payment b{font-size:12px}
+.checkout-back{margin-top:7px;font-size:11px;color:#7d8874;padding:7px 0}
+@media(min-width:1800px){.checkout-card{padding:32px 36px}}
+@media(max-width:1400px){.checkout-card{padding:24px}.checkout-card-heading{gap:18px}.checkout-contact-grid,.checkout-extras-grid{gap:18px 24px}}
+@media(max-width:1100px){.checkout-card{padding:22px}.checkout-total{padding:18px}.checkout-total strong{font-size:31px}.checkout-contact-grid dd,.checkout-extras-grid dd{font-size:12px}}
+@media(max-width:600px){.checkout-card{padding:21px 19px;margin-bottom:15px}.checkout-card-heading{gap:12px;margin-bottom:21px}.checkout-edit{font-size:9px;gap:5px;padding-top:7px}.checkout-edit svg{width:12px;height:12px}.checkout-contact-grid,.checkout-extras-grid{grid-template-columns:minmax(0,1fr);gap:17px}.checkout-extras-grid .wide{grid-column:auto}.checkout-passenger-name{font-size:22px;margin-bottom:18px}.checkout-contact-grid dd,.checkout-extras-grid dd{font-size:13px}.checkout-total{padding:17px 16px;gap:14px}.checkout-total strong{font-size:30px}.checkout-total span{font-size:11px}.checkout-total small{font-size:9px}.checkout-payment .terms-consent{font-size:11px}.checkout-payment .demo-information{padding:13px;gap:9px}.checkout-payment .demo-information p{font-size:10px}.checkout-payment .secure-payment{font-size:9px}.checkout-back{display:flex;justify-content:center;width:100%;padding:8px}}

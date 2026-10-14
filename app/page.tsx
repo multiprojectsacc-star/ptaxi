@@ -6,10 +6,10 @@ import {AIRPORT,VEHICLES,VEHICLE_BY_ID,formatPrice,type Locale,type VehicleId} f
 import {request,localWarsaw,warsawISO,displayDate,emptyDetails,type Trip,type Quote,type PassengerDetails,type BookingStatus} from '@/lib/client/booking';
 import AddressInput from '@/components/booking/AddressInput';
 import DeparturePicker from '@/components/booking/DeparturePicker';
-import RouteMap from '@/components/booking/RouteMap';
 import HowItWorks from '@/components/HowItWorks';
 import VehicleSelection from '@/components/booking/VehicleSelection';
 import DetailsJourney from '@/components/booking/DetailsJourney';
+import BookingReview from '@/components/booking/BookingReview';
 
 const initialTrip:Trip={direction:'from-airport',location:null,departure:'',passengers:2,luggage:2};
 type BookingResult={bookingId:string;status:string;statusToken:string;paymentUrl:string|null;mode:'demo'|'live'};
@@ -121,11 +121,11 @@ export default function PersonalTaxi(){
  const totalStatus=result?.status||status?.status;
  const isDemo=(result?.mode||status?.mode)==='demo';
 
- return <div className={'app-shell'+(stage===0?' home-screen'+(mode==='demo'?' home-preview':''):stage===1?' vehicle-screen':stage===2?' details-screen':'')}>
+ return <div className={'app-shell'+(stage===0?' home-screen'+(mode==='demo'?' home-preview':''):stage===1?' vehicle-screen':stage===2?' details-screen':stage===3?' details-screen review-screen':'')}>
   <header className="site-header">
    <div className="header-inner">
     <a className="brand" href="/" onClick={e=>{e.preventDefault();if(!busy)editRoute();}} aria-label="Personal Taxi — strona główna"><img src="/images/logo-transparent.png" alt="Personal Taxi"/><span className="brand-divider"/><span className="brand-location">KRAKÓW AIRPORT</span></a>
-    {(stage===1||stage===2)&&<nav className="vehicle-header-steps" aria-label={t('Etapy rezerwacji','Booking steps')}>{[t('Samochód','Vehicle'),t('Twoje dane','Your details'),t('Potwierdzenie','Confirmation')].map((name,i)=><span key={name} aria-current={i===stage-1?'step':undefined}><small>0{i+1}</small>{name}</span>)}</nav>}
+    {stage>=1&&stage<=3&&<nav className="vehicle-header-steps" aria-label={t('Etapy rezerwacji','Booking steps')}>{[t('Samochód','Vehicle'),t('Twoje dane','Your details'),t('Potwierdzenie','Confirmation')].map((name,i)=><span key={name} aria-current={i===stage-1?'step':undefined}><small>0{i+1}</small>{name}</span>)}</nav>}
     <div className="header-actions">
      <button className="locale-button" onClick={()=>setLang(lang==='pl'?'en':'pl')} aria-label={t('Switch to English','Przełącz na polski')}><Globe2 size={17}/><span>{lang.toUpperCase()}</span><span className="currency">PLN</span><ChevronDown size={13}/></button>
      <div className="help-control"><button className="help-button" aria-expanded={help} onClick={()=>setHelp(!help)}><Headphones size={17}/>{t('Potrzebujesz pomocy?','Need help?')}<ChevronDown size={13}/></button>{help&&<div className="help-menu"><strong>{t('Porozmawiajmy o Twojej podróży','Let’s talk about your journey')}</strong><a href="tel:+48690048080"><Phone size={17}/>+48 690 04 80 80</a><a href="mailto:office@personaltaxi.pl"><Mail size={17}/>office@personaltaxi.pl</a></div>}</div>
@@ -176,7 +176,7 @@ export default function PersonalTaxi(){
     [t('Co obejmuje cena przejazdu?','What does the fare include?'),t('Prywatny samochód na wyznaczonej trasie i oczekiwanie: 60 minut po przylocie albo 15 minut przy odbiorze poza lotniskiem. Końcową kwotę zobaczysz przed rezerwacją.','Your private vehicle on the selected route and waiting: 60 minutes after arrival or 15 minutes for a non-airport pickup. You will see the final amount before booking.')]
    ].map(([q,a])=><details key={q}><summary>{q}<Plus size={17}/></summary><p>{a}</p></details>)}</div></section>
   </main>:<main className="booking-app">
-   {stage!==1&&stage!==2&&<div className="booking-progress"><div className="container">{[t('Trasa','Route'),t('Samochód','Vehicle'),t('Twoje dane','Your details'),t('Potwierdzenie','Confirmation')].map((name,i)=><div key={i} className={stage>i?'complete':stage===i?'current':''}><span>{stage>i?<Check size={13}/>:i+1}</span>{name}{i<3&&<ChevronRight size={14}/>}</div>)}</div></div>}
+   {stage===4&&<div className="booking-progress"><div className="container">{[t('Trasa','Route'),t('Samochód','Vehicle'),t('Twoje dane','Your details'),t('Potwierdzenie','Confirmation')].map((name,i)=><div key={i} className={stage>i?'complete':stage===i?'current':''}><span>{stage>i?<Check size={13}/>:i+1}</span>{name}{i<3&&<ChevronRight size={14}/>}</div>)}</div></div>}
    {stage===1&&quote?<VehicleSelection quote={quote} selected={vehicleId} lang={lang} busy={busy} error={error} onSelect={id=>{setVehicleId(id);setCombi(false);setError('');}} onContinue={()=>void selectVehicle(vehicleId)} onEdit={editRoute}/>:stage===4?<section className="confirmation-card container">
     {busy?<LoaderCircle className="spin" size={42}/>:<>
      <div className={'confirmation-symbol '+(error?'failed':'')}>{error?<CircleHelp size={34}/>:totalStatus==='pending'?<Clock3 size={34}/>:totalStatus==='payment_failed'?<Info size={34}/>:<CheckCircle2 size={34}/>}</div>
@@ -188,9 +188,9 @@ export default function PersonalTaxi(){
      {status?.status==='pending'&&<button className="button outline" onClick={()=>void loadStatus(new URLSearchParams(window.location.search).get('token')||'')}>{t('Odśwież status','Refresh status')}</button>}
      <button className="button yellow" onClick={reset}>{t('Wróć do rezerwacji','Back to booking')}<ArrowRight size={18}/></button>
     </>}
-   </section>:quote&&<div className={stage===2?'details-workspace':'booking-workspace container'}>
-    {stage===2?<DetailsJourney quote={quote} lang={lang} busy={busy} onEditRoute={editRoute} onEditVehicle={()=>{goStage(1);setError('');}}/>:<aside className="trip-sidebar"><div className="trip-card"><div className="trip-card-title"><h2>{t('Twój przejazd','Your journey')}</h2><button disabled={busy} onClick={editRoute}>{t('Edytuj','Edit')}</button></div><RouteMap quote={quote}/><div className="route-stops"><div><span>A</span><small>{t('ODBIÓR','PICKUP')}</small><strong>{quote.from.name}</strong>{quote.from.address!==quote.from.name&&<p>{quote.from.address}</p>}</div><div><span>B</span><small>{t('CEL PODRÓŻY','DESTINATION')}</small><strong>{quote.to.name}</strong>{quote.to.address!==quote.to.name&&<p>{quote.to.address}</p>}</div></div><div className="trip-meta"><span><CalendarDays size={16}/>{displayDate(quote.departureAt,lang)}</span><span><Users size={16}/>{quote.passengers} {t('pasażerów','passengers')}<Luggage size={16}/>{quote.luggage} {t('walizek','suitcases')}</span><span><Route size={16}/>{quote.distanceKm.toFixed(1)} km<Clock3 size={16}/>{t('ok.','approx.')} {quote.durationMinutes} min</span></div>{stage>1&&<div className="sidebar-total"><small>{vehicle.name}{quote.combi?' · kombi':''}</small><div><span>{t('Łączna cena','Total price')}</span><strong>{formatPrice(quote.amount,lang)}</strong></div></div>}</div><div className="sidebar-help"><Headphones size={24}/><div><strong>{t('Jesteśmy do Twojej dyspozycji','We’re here to help')}</strong><a href="tel:+48690048080">+48 690 04 80 80</a></div></div></aside>}
-    <div className={stage===2?"booking-content details-content":"booking-content"}>
+   </section>:quote&&<div className="details-workspace">
+    <DetailsJourney quote={quote} lang={lang} busy={busy} onEditRoute={editRoute} onEditVehicle={()=>{goStage(1);setError('');}}/>
+    <div className="booking-content details-content">
      {error&&<div className="inline-error" role="alert"><Info size={18}/>{error}</div>}
      {stage===2?<>
       <div className="screen-heading"><span className="section-kicker">{t('TWOJA PODRÓŻ, DOPRACOWANA','YOUR JOURNEY, TAKEN CARE OF')}</span><h1>{t('Kogo odbieramy?','Who are we picking up?')}</h1><p>{t('Podaj dane pasażera. Zadbamy o kontakt i sprawny odbiór.','Add your passenger details. We’ll take care of a smooth pickup.')}</p></div>
@@ -201,14 +201,8 @@ export default function PersonalTaxi(){
        <div className="details-next-note"><ShieldCheck size={16}/>{t('Sprawdzisz wszystkie dane przed płatnością.','You’ll review all your details before payment.')}</div>
        <div className="screen-actions"><button type="button" className="back-link" disabled={busy} onClick={()=>{goStage(1);setError('');}}><ArrowLeft size={17}/>{t('Wybór samochodu','Vehicle selection')}</button><button className="button yellow" disabled={busy}>{busy?<LoaderCircle className="spin" size={18}/>:<>{t('Sprawdź rezerwację','Review booking')}<ArrowRight size={18}/></>}</button></div>
       </form>
-     </>:<>
-      <div className="screen-heading"><span className="section-kicker">{t('04 / POTWIERDŹ REZERWACJĘ','04 / CONFIRM YOUR BOOKING')}</span><h1>{t('Wszystko gotowe do podróży.','Ready for your journey.')}</h1><p>{t('Sprawdź dane. Do zobaczenia na trasie.','Check your details. We’ll see you on the road.')}</p></div>
-      <div className="review-panel"><div className="review-vehicle"><img src={vehicle.image} alt={vehicle.name}/><div><small>{t('TWÓJ SAMOCHÓD','YOUR VEHICLE')}</small><h2>{vehicle.name}{quote.combi?' · kombi':''}</h2><p>{quote.passengers} {t('pasażerów','passengers')} · {quote.luggage} {t('walizek','suitcases')}</p></div><button onClick={()=>goStage(1)}>{t('Zmień','Change')}</button></div><div className="review-details"><div><small>{t('PASAŻER','PASSENGER')}</small><strong>{customer.firstName} {customer.lastName}</strong><p>{customer.email}<br/>{customer.phone}</p></div><button onClick={()=>goStage(2)}>{t('Edytuj','Edit')}</button></div>{(details.flightNumber||details.notes||details.unusualItems||invoice.requested)&&<div className="review-extras">{details.flightNumber&&<p><strong>{t('Lot','Flight')}</strong>{details.flightNumber}</p>}{details.unusualItems&&<p><strong>{t('Bagaż','Luggage')}</strong>{details.unusualItems}</p>}{details.notes&&<p><strong>{t('Uwagi','Notes')}</strong>{details.notes}</p>}{invoice.requested&&<p><strong>{t('Faktura','Invoice')}</strong>{invoice.companyName} · {invoice.taxId}<br/>{invoice.address}</p>}</div>}<div className="review-total"><span>{t('Całkowita cena przejazdu','Total transfer price')}<small>{t('Za cały samochód. Cena obejmuje wyznaczoną trasę.','For the whole vehicle on your selected route.')}</small></span><strong>{formatPrice(quote.amount,lang)}</strong></div></div>
-      {mode==='demo'&&<div className="demo-information"><Info size={20}/><div><strong>{t('Test rezerwacji','Booking test')}</strong><p>{t('Adres i trasa są rzeczywiste. Zapis tej rezerwacji służy testowi i nie zamawia przejazdu ani nie obciąża płatnością.','The address and route are real. This booking is saved for testing and does not order a transfer or take payment.')}</p></div></div>}
-      <label className="checkbox-row terms-consent"><input type="checkbox" checked={acceptTerms} onChange={e=>setAcceptTerms(e.target.checked)}/><span>{t('Akceptuję','I accept the')} <button onClick={()=>setLegal('terms')}>{t('regulamin','terms')}</button> {t('i zapoznałem/am się z','and have read the')} <button onClick={()=>setLegal('privacy')}>{t('polityką prywatności','privacy policy')}</button>.</span></label>
-      <div className="screen-actions"><button className="back-link" disabled={busy} onClick={()=>goStage(2)}><ArrowLeft size={16}/>{t('Dane pasażera','Passenger details')}</button><button className="button yellow" disabled={!acceptTerms||busy} onClick={()=>void book()}>{busy?<LoaderCircle className="spin" size={18}/>:<>{mode==='demo'?t('Zapisz rezerwację testową','Save test booking'):t('Rezerwuję i płacę','Book and pay')}<ArrowRight size={18}/></>}</button></div>
-      <div className="secure-payment"><LockKeyhole size={14}/>{t('Płatność obsługiwana przez','Payment handled by')} <b>Przelewy<span>24</span></b></div>
-     </>}
+     </>:<BookingReview quote={quote} details={details} lang={lang} mode={mode} busy={busy} accepted={acceptTerms} onAccept={setAcceptTerms} onEdit={()=>{goStage(2);setError('');}} onLegal={setLegal} onBook={()=>void book()}/>}
+
     </div>
    </div>}
   </main>}
