@@ -26,7 +26,6 @@ export default function PersonalTaxi(){
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState('');
  const [mode,setMode]=useState<'demo'|'live'>('demo');
- const [mapsMode,setMapsMode]=useState<'live'|'demo'>('live');
  const [ready,setReady]=useState(false);
  const [acceptTerms,setAcceptTerms]=useState(false);
  const [status,setStatus]=useState<BookingStatus|null>(null);
@@ -49,7 +48,7 @@ export default function PersonalTaxi(){
    }
   }catch{}
   setReady(true);
-  request<{mode:'demo'|'live';mapsMode:'live'|'demo'}>('/api/config').then(c=>{setMode(c.mode);setMapsMode(c.mapsMode);}).catch(()=>{});
+  request<{mode:'demo'|'live'}>('/api/config').then(c=>{setMode(c.mode);}).catch(()=>{});
   const token=new URLSearchParams(window.location.search).get('token');
   if(token){setStage(4);void loadStatus(token);}
  },[]);
@@ -79,7 +78,7 @@ export default function PersonalTaxi(){
   try{
    const id=trip.passengers>4||trip.luggage>4?'van':'sedan';
    const next=await createQuote(id);
-   setQuote(next);setMode(next.mode);setMapsMode(next.mapsMode);setVehicleId(id);setCombi(false);goStage(1);
+   setQuote(next);setMode(next.mode);setVehicleId(id);setCombi(false);goStage(1);
   }catch(e){setError((e as Error).message);}finally{setBusy(false);}
  }
  async function selectVehicle(id:VehicleId){
@@ -123,7 +122,7 @@ export default function PersonalTaxi(){
  const totalStatus=result?.status||status?.status;
  const isDemo=(result?.mode||status?.mode)==='demo';
 
- return <div className={'app-shell'+(stage===0?' home-screen'+(mode==='demo'?' home-preview':''):stage===1?' vehicle-screen':stage===2?' details-screen':stage===3?' details-screen review-screen':'')}>
+ return <div className={'app-shell'+(stage===0?' home-screen':stage===1?' vehicle-screen':stage===2?' details-screen':stage===3?' details-screen review-screen':'')}>
   <header className="site-header">
    <div className="header-inner">
     <a className="brand" href="/" onClick={e=>{e.preventDefault();if(!busy)editRoute();}} aria-label="Personal Taxi — strona główna"><img src="/images/logo-transparent.png" alt="Personal Taxi"/><span className="brand-divider"/><span className="brand-location">KRAKÓW AIRPORT</span></a>
@@ -134,7 +133,6 @@ export default function PersonalTaxi(){
     </div>
    </div>
   </header>
-  {mode==='demo'&&<div className="test-strip"><span/>{mapsMode==='live'?t('Podgląd rezerwacji · rzeczywiste adresy i trasy · płatności testowe','Booking preview · real addresses and routes · test payments'):t('Podgląd rezerwacji · płatności testowe','Booking preview · test payments')}</div>}
 
   {stage===0?<main>
    <section className="home-hero">
