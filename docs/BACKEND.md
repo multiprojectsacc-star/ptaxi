@@ -1,14 +1,14 @@
 # Personal Taxi — unified backend
 
-One Vinext/Cloudflare Worker project serves the frontend and `/api` handlers. Cloudflare D1 persists canonical locations, server-calculated quotes, complete bookings, payment sessions and the email outbox. No previous secrets or customer records were copied.
+One Next.js App Router project serves the frontend and Node.js `/api` handlers on Vercel. PostgreSQL persists canonical locations, server-calculated quotes, complete bookings, payment sessions and the email outbox. No previous secrets or customer records were copied.
 
 ## Demo and production
 
-`DEMO_MODE` defaults to `true` when absent. Demo uses eight clearly labelled sample locations and deterministic illustrative road distances. Quotes and demo bookings are persisted in D1. Demo bookings have status `demo`, never `paid`; no P24 request or email is sent. These routes are illustrative, not a live navigation estimate.
+`DEMO_MODE` defaults to `true` when absent. Without a TomTom key, demo uses eight clearly labelled sample locations and deterministic illustrative road distances. With a TomTom key, maps and routes remain real even when payments are in demo mode. Quotes and demo bookings are persisted in PostgreSQL. Demo bookings have status `demo`, never `paid`; no P24 request or email is sent. These routes are illustrative, not a live navigation estimate.
 
-Set `DEMO_MODE=false` only after configuring every real integration in `.env.example`. In real mode address search and road routing use TomTom on the server. Browser-supplied coordinates, price, paid state and return URLs are not trusted: address ID is resolved to the canonical server-cached result, and quote amounts are read from D1 when creating the booking.
+Set `DEMO_MODE=false` only after configuring every real integration in `.env.example`. In real mode address search and road routing use TomTom on the server. Browser-supplied coordinates, price, paid state and return URLs are not trusted: address ID is resolved to the canonical server-cached result, and quote amounts are read from PostgreSQL when creating the booking.
 
-The original project's SMTP integration has been replaced with the Resend HTTP API because the Worker deployment does not support the legacy raw SMTP connection. Configure a verified sending domain and sender identity. This is an intentional provider migration, not an already activated email account.
+Email delivery continues to use the Resend HTTP API with the persisted outbox. Configure a verified sending domain and sender identity. This is an intentional provider migration, not an already activated email account.
 
 ## Confirmed commercial rules
 
@@ -29,7 +29,7 @@ All amounts are integer grosz; divide by 100 for display. All endpoints return `
 - `GET /api/locations?q=Kraków`: `{mode, locations:[{id,name,address,lat,lng,isAirport?,demo?}]}`. At least two characters.
 - `POST /api/quote`: `{direction:"from-airport"|"to-airport",location:{id,name,address,lat,lng},departureAt:<ISO with timezone>,vehicleId:"sedan"|"premium"|"van",passengers,luggage,combi,currency:"PLN"}`. Returns `{quoteId,expiresAt:<epoch ms>,mode,distanceKm,durationMinutes,amount,currency,vehicleId,from,to,offers:[{vehicleId,amount,available}],routePoints:[[lat,lng]],radiusKm,...parameters}`. Offer expires after 15 minutes. Changing vehicle requires a new quote.
 - `POST /api/bookings`: `{quoteId,customer:{firstName,lastName,email,phone},flightNumber?,notes?,unusualItems?,invoice?:{requested,companyName?,taxId?,address?},acceptTerms:true}`. Returns `{bookingId,status:"demo"|"pending",statusToken,paymentUrl:null|string,mode}` with HTTP 201. A quote can create only one booking, enforced by a DB unique index.
-- `GET /api/bookings/status?token=<opaque 64-character token>`: `{bookingId,status:"demo"|"pending"|"paid"|"payment_failed",mode,amount,currency,from,to,departureAt,vehicleId,emailSent,distanceKm,durationMinutes,passengers,luggage,combi}`. The random status token is a capability; D1 stores only its SHA-384 hash. Do not put it in analytics, logs or referrers. This endpoint never changes payment state.
+- `GET /api/bookings/status?token=<opaque 64-character token>`: `{bookingId,status:"demo"|"pending"|"paid"|"payment_failed",mode,amount,currency,from,to,departureAt,vehicleId,emailSent,distanceKm,durationMinutes,passengers,luggage,combi}`. The random status token is a capability; PostgreSQL stores only its SHA-384 hash. Do not put it in analytics, logs or referrers. This endpoint never changes payment state.
 - `POST /api/payments/notify`: P24 JSON callback. Requires valid P24 SHA-384 signature, exact saved amount/original amount/currency/session/merchant/pos, and successful server-to-server `transaction/verify`. Browser return pages are not payment confirmation.
 - `POST /api/internal/email-retry`: requires `Authorization: Bearer <CRON_SECRET>`; reconciles up to five interrupted payment verifications, then drains up to ten queued messages. Set a secure external scheduler to call it every minute in production. The secret must be at least 32 characters. Demo performs no sends.
 
@@ -37,17 +37,17 @@ Live P24 `urlReturn` points to `/rezerwacja/status?token=...` and `urlStatus` to
 
 ## Payment and notification integrity
 
-P24 Basic Auth uses `posId:API_KEY`. Registration, webhook and verification signatures use their distinct documented SHA-384 field orders. Credentials stay server-side. The webhook first authenticates its signature, matches the durable booking, and saves the authenticated notification with internal `verifying` state before calling P24 verification. If the process dies after remote verification, the protected retry job resumes from that stored event. A failed/repeated verify request can be reconciled through authenticated `transaction/by/sessionId` only when status is 2 and session, order ID, amount and currency exactly match. The public status endpoint maps `verifying` to `pending`. An atomic D1 batch marks it paid and inserts deterministic customer/operator email jobs. Duplicate signed callbacks do not create duplicate jobs. Conflicting provider order IDs are rejected.
+P24 Basic Auth uses `posId:API_KEY`. Registration, webhook and verification signatures use their distinct documented SHA-384 field orders. Credentials stay server-side. The webhook first authenticates its signature, matches the durable booking, and saves the authenticated notification with internal `verifying` state before calling P24 verification. If the process dies after remote verification, the protected retry job resumes from that stored event. A failed/repeated verify request can be reconciled through authenticated `transaction/by/sessionId` only when status is 2 and session, order ID, amount and currency exactly match. The public status endpoint maps `verifying` to `pending`. An atomic PostgreSQL transaction marks it paid and inserts deterministic customer/operator email jobs. Duplicate signed callbacks do not create duplicate jobs. Conflicting provider order IDs are rejected.
 
 Resend sends use stable idempotency keys. Outbox jobs are leased before dispatch; unsuccessful jobs remain pending. Since provider idempotency keys expire after 24 hours, unresolved retries older than 23 hours are moved to `needs_review` for operator reconciliation. `emailSent` means the email provider accepted the customer message; it does not assert recipient inbox delivery. Production operations must monitor pending/needs_review jobs and replay verified payments after an outage. P24 sends successful-payment callbacks only; an abandoned payment can remain pending. Failed registration has separate `payment_failed` status.
 
-Rate limiting uses D1 counters keyed by hashed Cloudflare client IP and minute, never raw IP. Configure platform WAF/rate controls for a high-traffic deployment. The API limits payload length and validates inputs. HTML is not accepted in rendered email templates (messages are sent as plain text). No request body or provider response is logged.
+Rate limiting uses PostgreSQL counters keyed by hashed Vercel client IP and minute, never raw IP. Configure platform WAF/rate controls for a high-traffic deployment. The API limits payload length and validates inputs. HTML is not accepted in rendered email templates (messages are sent as plain text). No request body or provider response is logged.
 
 ## Setup and validation
 
-1. Keep `.dev.vars` untracked; copy key names from `.env.example`, never legacy credentials.
-2. Bind D1 as `DB`. Generate the schema migration using `npm run db:generate`; apply the resulting migration to the local preview database via the starter workflow.
-3. Run `node --test tests/backend.test.ts` (Node 24+) for pricing boundaries, validation, geography, lead time, input tampering, P24 signature construction and payment matching.
+1. Keep `.env.local` untracked; configure Vercel server environment variables using `.env.example`, never client-visible variables for secrets.
+2. Set the pooled PostgreSQL `DATABASE_URL` on Vercel and apply `npm run db:migrate`. Local development can explicitly use `PGLITE_DATA_DIR`; Vercel never falls back to file storage. Historical D1 migrations are archived under `docs/legacy-d1`.
+3. Run `npm test` (Node 24) for business rules, PostgreSQL persistence, cache upserts, transaction rollback, JSONB callback storage and payment/email idempotency.
 4. Exercise local demo search → quote → booking → opaque status, invalid/expired quote, duplicate booking and attempted fake callback. Demo status must remain demo, with `paymentUrl:null` and `emailSent:false`.
 5. Prior to a real launch, use separate P24 sandbox credentials, publicly reachable callback URL and a verified test sender; perform a controlled end-to-end sandbox payment and duplicate callback test. No real payment, email, or legacy production database operation was performed during development.
 6. Confirm legal documents, business details, production secrets, DNS/sending domain, data-retention policy, outbox monitoring and retry scheduler before enabling real booking. Legacy secrets exposed in the old client/API must be rotated through their provider panels.

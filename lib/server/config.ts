@@ -1,7 +1,8 @@
-import { env } from "cloudflare:workers";
+import 'server-only';
 import { ApiError } from "./rules";
 
 export function config() {
+  const env = process.env;
   const mode = env.DEMO_MODE === "false" ? "live" as const : "demo" as const;
   const radius = Number(env.SERVICE_RADIUS_KM || 0);
   return {

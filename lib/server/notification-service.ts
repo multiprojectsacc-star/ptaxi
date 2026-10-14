@@ -20,7 +20,7 @@ export async function processNotification(notification:Notification,c:Config){
   // Save the authenticated event BEFORE the external side effect. The retry job can recover a crash.
   const claimed=await db.update(bookings).set({
     status:"verifying",providerOrderId:String(notification.orderId),
-    payload:sql`json_set(${bookings.payload}, '$.paymentNotification', json(${JSON.stringify(notification)}))`,
+    payload:sql`jsonb_set(${bookings.payload}::jsonb, '{paymentNotification}', ${JSON.stringify(notification)}::jsonb, true)::text`,
   }).where(and(eq(bookings.id,booking.id),ne(bookings.status,"paid"),or(isNull(bookings.providerOrderId),eq(bookings.providerOrderId,String(notification.orderId))))).returning({id:bookings.id});
   if(!claimed.length){
     const [current]=await db.select().from(bookings).where(eq(bookings.id,booking.id)).limit(1);
@@ -35,11 +35,13 @@ export async function processNotification(notification:Notification,c:Config){
     }
   }
   const now=Date.now();
-  await db.batch([
-    db.update(bookings).set({status:"paid",paidAt:now,providerOrderId:String(notification.orderId)}).where(and(eq(bookings.id,booking.id),ne(bookings.status,"paid"),eq(bookings.providerOrderId,String(notification.orderId)))),
-    db.insert(emailOutbox).values({id:`${booking.id}:customer`,bookingId:booking.id,audience:"customer",createdAt:now}).onConflictDoNothing(),
-    db.insert(emailOutbox).values({id:`${booking.id}:operations`,bookingId:booking.id,audience:"operations",createdAt:now}).onConflictDoNothing(),
-  ]);
+  await db.transaction(async tx=>{
+    await tx.update(bookings).set({status:"paid",paidAt:now,providerOrderId:String(notification.orderId)}).where(and(eq(bookings.id,booking.id),ne(bookings.status,"paid"),eq(bookings.providerOrderId,String(notification.orderId))));
+    await tx.insert(emailOutbox).values([
+      {id:`${booking.id}:customer`,bookingId:booking.id,audience:"customer",createdAt:now},
+      {id:`${booking.id}:operations`,bookingId:booking.id,audience:"operations",createdAt:now},
+    ]).onConflictDoNothing();
+  });
   await deliverOutbox(c,booking.id);
 }
 

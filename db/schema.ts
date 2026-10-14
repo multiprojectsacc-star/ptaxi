@@ -1,22 +1,22 @@
-import { integer, sqliteTable, text, uniqueIndex, index } from "drizzle-orm/sqlite-core";
+import { bigint, integer, pgTable, text, uniqueIndex, index } from "drizzle-orm/pg-core";
 
-export const locations = sqliteTable("locations", {
+export const locations = pgTable("locations", {
   id: text("id").primaryKey(),
   payload: text("payload").notNull(),
-  expiresAt: integer("expires_at").notNull(),
+  expiresAt: bigint("expires_at", {mode: "number"}).notNull(),
 });
 
-export const quotes = sqliteTable("quotes", {
+export const quotes = pgTable("quotes", {
   id: text("id").primaryKey(),
   mode: text("mode").notNull(),
   payload: text("payload").notNull(),
   amount: integer("amount").notNull(),
   currency: text("currency").notNull().default("PLN"),
-  expiresAt: integer("expires_at").notNull(),
-  createdAt: integer("created_at").notNull(),
+  expiresAt: bigint("expires_at", {mode: "number"}).notNull(),
+  createdAt: bigint("created_at", {mode: "number"}).notNull(),
 });
 
-export const bookings = sqliteTable("bookings", {
+export const bookings = pgTable("bookings", {
   id: text("id").primaryKey(),
   quoteId: text("quote_id").notNull().references(() => quotes.id),
   statusTokenHash: text("status_token_hash").notNull(),
@@ -28,28 +28,28 @@ export const bookings = sqliteTable("bookings", {
   sessionId: text("session_id").notNull(),
   providerOrderId: text("provider_order_id"),
   providerToken: text("provider_token"),
-  createdAt: integer("created_at").notNull(),
-  paidAt: integer("paid_at"),
+  createdAt: bigint("created_at", {mode: "number"}).notNull(),
+  paidAt: bigint("paid_at", {mode: "number"}),
 }, (table) => [
   uniqueIndex("bookings_quote_unique").on(table.quoteId),
   uniqueIndex("bookings_token_unique").on(table.statusTokenHash),
   uniqueIndex("bookings_session_unique").on(table.sessionId),
 ]);
 
-export const emailOutbox = sqliteTable("email_outbox", {
+export const emailOutbox = pgTable("email_outbox", {
   id: text("id").primaryKey(),
   bookingId: text("booking_id").notNull().references(() => bookings.id),
   audience: text("audience").notNull(),
   status: text("status").notNull().default("pending"),
   attempts: integer("attempts").notNull().default(0),
-  lockedUntil: integer("locked_until"),
+  lockedUntil: bigint("locked_until", {mode: "number"}),
   providerId: text("provider_id"),
-  createdAt: integer("created_at").notNull(),
-  sentAt: integer("sent_at"),
+  createdAt: bigint("created_at", {mode: "number"}).notNull(),
+  sentAt: bigint("sent_at", {mode: "number"}),
 }, (table) => [index("email_outbox_pending").on(table.status)]);
 
-export const rateLimits = sqliteTable("rate_limits", {
+export const rateLimits = pgTable("rate_limits", {
   id: text("id").primaryKey(),
   count: integer("count").notNull(),
-  expiresAt: integer("expires_at").notNull(),
+  expiresAt: bigint("expires_at", {mode: "number"}).notNull(),
 });

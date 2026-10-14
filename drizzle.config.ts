@@ -1,7 +1,11 @@
 import { defineConfig } from "drizzle-kit";
+import nextEnv from '@next/env';
+
+nextEnv.loadEnvConfig(process.cwd());
 
 export default defineConfig({
-  out: "./drizzle",
+  out: "./drizzle/postgres",
   schema: "./db/schema.ts",
-  dialect: "sqlite",
+  dialect: "postgresql",
+  dbCredentials: {url: process.env.DATABASE_URL || ''},
 });

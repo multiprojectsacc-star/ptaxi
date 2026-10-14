@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { locations } from "@/db/schema";
 import { AIRPORT, type Location } from "@/lib/booking";
@@ -41,12 +41,12 @@ export async function searchLocations(query:string,c:Config):Promise<Location[]>
     if(!address)continue;
     result.push(location);
   }
-  if(result.length){
+  const uniqueResults=[...new Map(result.map(location=>[location.id,location])).values()];
+  if(uniqueResults.length){
     const db=getDb();
-    const statements=result.map(location=>db.insert(locations).values({id:location.id,payload:JSON.stringify(location),expiresAt:Date.now()+24*3600_000}).onConflictDoUpdate({target:locations.id,set:{payload:JSON.stringify(location),expiresAt:Date.now()+24*3600_000}}));
-    await db.batch([statements[0],...statements.slice(1)]);
+    await db.insert(locations).values(uniqueResults.map(location=>({id:location.id,payload:JSON.stringify(location),expiresAt:Date.now()+24*3600_000}))).onConflictDoUpdate({target:locations.id,set:{payload:sql`excluded.payload`,expiresAt:sql`excluded.expires_at`}});
   }
-  return result;
+  return uniqueResults;
 }
 
 export async function resolveLocation(id:string,c:Config):Promise<Location>{

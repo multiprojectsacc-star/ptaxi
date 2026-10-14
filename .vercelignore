@@ -1,0 +1,13 @@
+node_modules
+.next
+.data
+.git
+.openai
+.open-next
+.sites-runtime
+.wrangler
+.env*
+.dev.vars*
+dist
+outputs
+examples

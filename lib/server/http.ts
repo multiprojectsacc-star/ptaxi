@@ -18,7 +18,12 @@ export async function handle(action: () => Promise<Response>) {
 }
 export function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) throw new ApiError(403,"ORIGIN","Nieprawidłowe źródło żądania.");
+  // Next can use an internal hostname in request.url. Validate the public host;
+  // forwarded host is trusted only when the request runs behind Vercel's proxy.
+  const url = new URL(request.url);
+  const host = (process.env.VERCEL ? request.headers.get('x-forwarded-host') : null) || request.headers.get('host') || url.host;
+  const protocol = process.env.VERCEL ? 'https:' : url.protocol;
+  if (origin && origin !== `${protocol}//${host}`) throw new ApiError(403,"ORIGIN","Nieprawidłowe źródło żądania.");
   if (request.headers.get("sec-fetch-site") === "cross-site") throw new ApiError(403,"ORIGIN","Nieprawidłowe źródło żądania.");
 }
 export async function readJson(request: Request) {
@@ -30,7 +35,8 @@ export async function readJson(request: Request) {
 }
 export async function rateLimit(request: Request, category: string, limit: number) {
   const now = Date.now();
-  const ip = request.headers.get("cf-connecting-ip") || "local-preview";
+  // Vercel overwrites this header at its edge. Local development shares one bucket.
+  const ip = process.env.VERCEL ? request.headers.get("x-forwarded-for")?.split(',')[0]?.trim() || 'unknown' : 'local-preview';
   const id = await sha384(`${category}:${ip}:${Math.floor(now / 60_000)}`);
   const db = getDb();
   const rows = await db.insert(rateLimits).values({id,count:1,expiresAt:now+120_000})

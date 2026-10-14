@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 const base=process.env.TEST_BASE_URL||'http://127.0.0.1:5183';
-const auth=process.env.TEST_SITES_TOKEN?{'OAI-Sites-Authorization':'Bearer '+process.env.TEST_SITES_TOKEN}:{};
-async function call(path,body){const res=await fetch(base+path,{method:body?'POST':'GET',headers:{...auth,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});return {status:res.status,data:await res.json()};}
+async function call(path,body){const res=await fetch(base+path,{method:body?'POST':'GET',headers:body?{'Content-Type':'application/json',Origin:new URL(base).origin,'Sec-Fetch-Site':'same-origin'}:{},body:body?JSON.stringify(body):undefined});return {status:res.status,data:await res.json()};}
 const config=await call('/api/config');assert.equal(config.data.mode,'demo','Run this test with test payments only');assert.equal(config.data.mapsMode,'live','The real TomTom integration must be configured');
 for(const query of ['Opole','Opole, Ozimska 2']){const result=await call('/api/locations?q='+encodeURIComponent(query));assert.equal(result.status,200);assert.equal(result.data.mapsMode,'live');assert.ok(result.data.locations.some(l=>l.address.includes('Opole')),query+' must find Opole');console.log(query+': '+result.data.locations[0].address);}
 const result=await call('/api/locations?q='+encodeURIComponent('Opole, Ozimska 2'));

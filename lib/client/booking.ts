@@ -1,4 +1,5 @@
 import type { Direction, Location, VehicleId, Locale } from '@/lib/booking';
+import type {Country} from 'react-phone-number-input';
 export type MapMode = 'live' | 'demo';
 export type Quote = {
   quoteId:string; expiresAt:number; mode:'demo'|'live'; mapsMode:MapMode; mapProvider:'tomtom'|'demo';
@@ -9,7 +10,7 @@ export type Quote = {
 };
 export type Trip = {direction:Direction;location:Location|null;departure:string;passengers:number;luggage:number};
 export type Customer = {firstName:string;lastName:string;email:string;phone:string};
-export type PassengerDetails = {customer:Customer;flightNumber:string;notes:string;unusualItems:string;invoice:{requested:boolean;companyName:string;taxId:string;address:string}};
+export type PassengerDetails = {customer:Customer;phoneCountry?:Country;flightNumber:string;notes:string;unusualItems:string;invoice:{requested:boolean;companyName:string;taxId:string;address:string}};
 export type BookingStatus = {bookingId:string;status:'demo'|'pending'|'paid'|'payment_failed';mode:'demo'|'live';amount:number;from:Location;to:Location;departureAt:string;vehicleId:VehicleId;emailSent:boolean};
 export function localWarsaw(ms=Date.now()+24*3600000){return new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Warsaw',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(ms)).replace(' ','T').slice(0,16);}
 export function warsawISO(local:string){const naive=Date.parse(local+'Z');if(!Number.isFinite(naive))throw new Error('Wybierz datę i godzinę odbioru.');let ms=naive;for(let i=0;i<3;i++)ms+=naive-Date.parse(localWarsaw(ms)+'Z');if(localWarsaw(ms)!==local)throw new Error('Ta godzina nie istnieje podczas zmiany czasu. Wybierz inną.');return new Date(ms).toISOString();}
