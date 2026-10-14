@@ -59,7 +59,7 @@ export default function HowItWorks({lang}: {lang: Locale}) {
 
 function BookingMotion({t}: {t: Translate}) {
  return <div className="motion-interface booking-motion">
-  <div className="motion-panel-header"><span>{t('REZERWACJA ONLINE','ONLINE BOOKING')}</span><span className="motion-brand">PERSONAL TAXI</span></div>
+  <div className="motion-panel-header"><span>{t('REZERWACJA ONLINE','ONLINE BOOKING')}</span></div>
   <div className="reservation-lines">
    <div className="reservation-line motion-animated booking-route"><small>{t('TRASA','ROUTE')}</small><strong>Kraków Airport <span>→</span> {t('Twój adres','Your address')}</strong><span className="reservation-line-indicator motion-animated route-selected"/></div>
    <div className="reservation-line motion-animated booking-vehicle"><small>{t('SAMOCHÓD I TERMIN','VEHICLE & DATE')}</small><strong>{t('Wybrane dla Twojej podróży','Chosen for your journey')}</strong><span className="reservation-line-indicator motion-animated vehicle-selected"/></div>
@@ -70,14 +70,20 @@ function BookingMotion({t}: {t: Translate}) {
 
 function ArrivalMotion({t}: {t: Translate}) {
  return <div className="motion-interface arrival-motion">
-  <div className="motion-panel-header"><span>KRAKÓW AIRPORT</span><span className="motion-airport-code">KRK</span></div>
-  <div className="arrival-status"><span className="motion-animated flight-status-pending">{t('Monitorujemy Twój lot','Monitoring your flight')}</span><span className="motion-animated flight-status-landed">{t('Lot wylądował','Your flight has landed')}</span></div>
+  <div className="motion-panel-header"><span>{t('MONITORING I ODBIÓR','MONITORING & PICKUP')}</span></div>
+  <div className="arrival-status"><span className="motion-animated flight-status-pending">{t('Monitorujemy Twój lot','Monitoring your flight')}</span><span className="motion-animated flight-status-landed">{t('Samolot wylądował','Your plane has landed')}</span></div>
   <svg className="arrival-chart" viewBox="0 0 320 90" fill="none" focusable="false">
-   <path d="M7 69H306M7 38H306" stroke="#334048" strokeWidth=".7"/>
-   <path d="M19 53H286" stroke="#516068" strokeWidth="1" strokeDasharray="3 5"/>
-   <path className="motion-animated flight-trace" d="M19 53H286" stroke="#d3b17a" strokeWidth="1.4" pathLength="1" strokeDasharray="1"/>
+   <path d="M7 69H224M7 38H224M234 9V83" stroke="#334048" strokeWidth=".7"/>
+   <path d="M19 53H211" stroke="#516068" strokeWidth="1" strokeDasharray="3 5"/>
+   <path className="motion-animated flight-trace" d="M19 53H211" stroke="#d3b17a" strokeWidth="1.4" pathLength="1" strokeDasharray="1"/>
    <g className="motion-animated flight-marker" stroke="#e0c391" strokeWidth="1.4" strokeLinejoin="round"><path d="M-9-4-3-3 2-11h3L3-3l8 2v2L3 3l2 8H2L-3 3l-6 1-2-4 2-4Z" fill="#1d282f"/></g>
-   <circle cx="286" cy="53" r="3" fill="#d3b17a"/><circle className="motion-animated airport-signal" cx="286" cy="53" r="9" stroke="#d3b17a" strokeWidth="1"/>
+   <circle cx="211" cy="53" r="3" fill="#d3b17a"/><circle className="motion-animated airport-signal" cx="211" cy="53" r="9" stroke="#d3b17a" strokeWidth="1"/>
+   <g className="arrival-driver-icon" stroke="#cbb184" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+    <ellipse cx="276" cy="19" rx="8" ry="9"/>
+    <path d="M272 28v6m8-6v6m-8 0c-11 2-18 8-20 16l-2 10m30-26c11 2 18 8 20 16l2 10M272 34l4 15 4-15m-4 8v13m-16-9-1 14m34-14 1 14"/>
+    <rect x="243" y="60" width="66" height="23" rx="2" fill="#1d282f"/>
+    <text x="276" y="75" stroke="none" fill="#dec79e" fontSize="8" fontWeight="450" textAnchor="middle">{t('Twoje imię','Your name')}</text>
+   </g>
   </svg>
   <div className="driver-ready"><span className="driver-status-light motion-animated"/><div><strong>{t('Kierowca czeka na Ciebie','Your driver is waiting')}</strong><small>{t('Odbiór z tabliczką w hali przylotów','Meet & greet in the arrivals hall')}</small></div></div>
  </div>;
@@ -85,7 +91,7 @@ function ArrivalMotion({t}: {t: Translate}) {
 
 function TransferMotion({t}: {t: Translate}) {
  return <div className="motion-interface transfer-motion">
-  <div className="motion-panel-header"><span>{t('PRYWATNY TRANSFER','PRIVATE TRANSFER')}</span><span className="motion-brand">PERSONAL TAXI</span></div>
+  <div className="motion-panel-header"><span>{t('PRYWATNY TRANSFER','PRIVATE TRANSFER')}</span></div>
   <svg className="transfer-chart" viewBox="0 0 320 180" fill="none" focusable="false">
    <g stroke="#35434b" strokeWidth=".7"><path d="M-10 25 90 25 145 0M-10 65 80 65 80 190M20-10V190M63-10V190M-10 115H330M-10 152H330M165-10V190M215-10V190M270-10V190M115-10V70M165 45H330M220 5H330"/><path d="m290-10-50 42-8 30-67 5-18 27-82-12-40 16"/></g>
    <path d="M35 150H110Q125 150 125 135V75Q125 60 140 60H265Q280 60 280 45V35" stroke="#64747a" strokeWidth="1.4"/>
