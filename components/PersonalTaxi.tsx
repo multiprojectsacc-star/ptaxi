@@ -9,7 +9,7 @@ import DeparturePicker from '@/components/booking/DeparturePicker';
 import HowItWorks from '@/components/HowItWorks';
 import VehicleSelection from '@/components/booking/VehicleSelection';
 import DetailsJourney from '@/components/booking/DetailsJourney';
-import BookingReview from '@/components/booking/BookingReview';
+import BookingReview, {BookingReviewPayment} from '@/components/booking/BookingReview';
 import PhoneField from '@/components/booking/PhoneField';
 
 const initialTrip:Trip={direction:'from-airport',location:null,departure:'',passengers:2,luggage:2};
@@ -191,20 +191,24 @@ export default function PersonalTaxi(){
      <button className="button yellow" onClick={reset}>{t('Wróć do rezerwacji','Back to booking')}<ArrowRight size={18}/></button>
     </>}
    </section>:quote&&<div className="details-workspace">
-    <DetailsJourney quote={quote} lang={lang} busy={busy} onEditRoute={editRoute} onEditVehicle={()=>{goStage(1);setError('');}}/>
     <div className="booking-content details-content">
      {error&&<div className="inline-error" role="alert"><Info size={18}/>{error}</div>}
      {stage===2?<>
       <div className="screen-heading"><span className="section-kicker">{t('TWOJA PODRÓŻ, DOPRACOWANA','YOUR JOURNEY, TAKEN CARE OF')}</span><h1>{t('Kogo odbieramy?','Who are we picking up?')}</h1><p>{t('Podaj dane pasażera. Zadbamy o kontakt i sprawny odbiór.','Add your passenger details. We’ll take care of a smooth pickup.')}</p></div>
-      <form className="passenger-form details-form" onSubmit={review}>
+      <form id="passenger-details" className="passenger-form details-form" onSubmit={review}>
        <section className="form-section"><div className="details-form-heading"><span>01</span><div><h2>{t('Dane pasażera','Passenger details')}</h2><p>{t('Dane do potwierdzenia rezerwacji i kontaktu w dniu podróży.','For your booking confirmation and contact on the day.')}</p></div></div><div className="input-grid"><label>{t('Imię','First name')}<input required minLength={2} maxLength={50} autoComplete="given-name" value={customer.firstName} onChange={e=>updateCustomer('firstName',e.target.value)} placeholder="Anna"/></label><label>{t('Nazwisko','Last name')}<input required minLength={2} maxLength={60} autoComplete="family-name" value={customer.lastName} onChange={e=>updateCustomer('lastName',e.target.value)} placeholder={t('Kowalska','Smith')}/></label><label>{t('E-mail','Email')}<input required type="email" maxLength={50} autoComplete="email" value={customer.email} onChange={e=>updateCustomer('email',e.target.value)} placeholder="anna@example.com"/><small>{t('Tu wyślemy potwierdzenie rezerwacji.','We’ll send your confirmation here.')}</small></label><PhoneField locale={lang} value={customer.phone} country={details.phoneCountry} onChange={value=>updateCustomer('phone',value)} onCountryChange={phoneCountry=>setDetails(v=>({...v,phoneCountry}))}/></div></section>
        <section className="form-section"><div className="details-form-heading"><span>02</span><div><h2>{t('Szczegóły podróży','Travel details')}</h2><p>{t('Dodaj informacje, które pomogą nam przygotować Twój transfer.','Anything that helps us prepare for your transfer.')}</p></div></div><div className="input-grid"><label>{t('Numer lotu','Flight number')}<span>{t('Opcjonalnie','Optional')}</span><input maxLength={20} value={details.flightNumber} onChange={e=>setDetails(v=>({...v,flightNumber:e.target.value.toUpperCase()}))} placeholder="FR 1234"/><small>{t('Pomoże nam monitorować Twój przylot.','Helps us monitor your arrival.')}</small></label><label>{t('Nietypowy bagaż','Unusual luggage')}<span>{t('Opcjonalnie','Optional')}</span><input maxLength={500} value={details.unusualItems} onChange={e=>setDetails(v=>({...v,unusualItems:e.target.value}))} placeholder={t('Np. wózek dziecięcy','E.g. a pushchair')}/></label><label className="wide">{t('Wiadomość dla kierowcy','Message for your driver')}<span>{t('Opcjonalnie','Optional')}</span><textarea rows={3} maxLength={1000} value={details.notes} onChange={e=>setDetails(v=>({...v,notes:e.target.value}))} placeholder={t('Co powinniśmy wiedzieć przed odbiorem?','Anything we should know before pickup?')}/></label></div>{vehicle.supportsCombi&&<label className="checkbox-row"><input type="checkbox" checked={combi} onChange={e=>setCombi(e.target.checked)}/><span>{t('Preferuję samochód z nadwoziem kombi','I prefer an estate vehicle')}</span></label>}</section>
        <section className="form-section invoice-section"><label className="checkbox-row"><input type="checkbox" checked={invoice.requested} onChange={e=>setDetails(v=>({...v,invoice:{...v.invoice,requested:e.target.checked}}))}/><span>{t('Potrzebuję faktury na firmę','I need a company invoice')}</span></label>{invoice.requested&&<div className="input-grid"><label>{t('Nazwa firmy','Company name')}<input required maxLength={150} value={invoice.companyName} onChange={e=>updateInvoice('companyName',e.target.value)}/></label><label>{t('NIP / numer podatkowy','VAT / tax ID')}<input required maxLength={25} value={invoice.taxId} onChange={e=>updateInvoice('taxId',e.target.value)}/></label><label className="wide">{t('Adres firmy','Company address')}<input required maxLength={250} value={invoice.address} onChange={e=>updateInvoice('address',e.target.value)}/></label></div>}</section>
-       <div className="details-next-note"><ShieldCheck size={16}/>{t('Sprawdzisz wszystkie dane przed płatnością.','You’ll review all your details before payment.')}</div>
-       <div className="screen-actions"><button type="button" className="back-link" disabled={busy} onClick={()=>{goStage(1);setError('');}}><ArrowLeft size={17}/>{t('Wybór samochodu','Vehicle selection')}</button><button className="button yellow" disabled={busy}>{busy?<LoaderCircle className="spin" size={18}/>:<>{t('Sprawdź rezerwację','Review booking')}<ArrowRight size={18}/></>}</button></div>
       </form>
-     </>:<BookingReview quote={quote} details={details} lang={lang} mode={mode} busy={busy} accepted={acceptTerms} onAccept={setAcceptTerms} onEdit={()=>{goStage(2);setError('');}} onLegal={setLegal} onBook={()=>void book()}/>}
+     </>:<BookingReview quote={quote} details={details} lang={lang} busy={busy} onEdit={()=>{goStage(2);setError('');}}/>}
 
+    </div>
+    <DetailsJourney quote={quote} lang={lang} busy={busy} onEditRoute={editRoute} onEditVehicle={()=>{goStage(1);setError('');}}/>
+    <div className="details-actions">
+    {stage===2?<>
+     <div className="details-next-note"><ShieldCheck size={16}/>{t('Sprawdzisz wszystkie dane przed płatnością.','You’ll review all your details before payment.')}</div>
+     <div className="screen-actions"><button type="button" className="back-link" disabled={busy} onClick={()=>{goStage(1);setError('');}}><ArrowLeft size={17}/>{t('Wybór samochodu','Vehicle selection')}</button><button type="submit" form="passenger-details" className="button yellow" disabled={busy}>{busy?<LoaderCircle className="spin" size={18}/>:<>{t('Sprawdź rezerwację','Review booking')}<ArrowRight size={18}/></>}</button></div>
+    </>:<BookingReviewPayment quote={quote} lang={lang} mode={mode} busy={busy} accepted={acceptTerms} onAccept={setAcceptTerms} onEdit={()=>{goStage(2);setError('');}} onLegal={setLegal} onBook={()=>void book()}/>}
     </div>
    </div>}
   </main>}

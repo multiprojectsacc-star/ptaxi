@@ -9,10 +9,9 @@ type Props = {
  onAccept: (value: boolean) => void; onEdit: () => void; onLegal: (document: 'terms' | 'privacy') => void; onBook: () => void;
 };
 
-export default function BookingReview({quote, details, lang, mode, busy, accepted, onAccept, onEdit, onLegal, onBook}: Props) {
+export default function BookingReview({quote, details, lang, busy, onEdit}: Pick<Props, 'quote' | 'details' | 'lang' | 'busy' | 'onEdit'>) {
  const t = (pl: string, en: string) => lang === 'pl' ? pl : en;
  const {customer, invoice} = details;
- const vehicle = VEHICLE_BY_ID[quote.vehicleId];
  const hasExtras = !!(details.flightNumber || details.unusualItems || details.notes || quote.combi);
 
  return <>
@@ -32,6 +31,14 @@ export default function BookingReview({quote, details, lang, mode, busy, accepte
    </dl> : <p className="checkout-empty-note">{t('Nie dodano dodatkowych uwag do przejazdu.', 'No additional notes were added to your transfer.')}</p>}
    {invoice.requested && <div className="checkout-invoice"><h3>{t('Faktura na firmę', 'Company invoice')}</h3><dl className="checkout-extras-grid"><div><dt>{t('Nazwa firmy', 'Company name')}</dt><dd>{invoice.companyName}</dd></div><div><dt>{t('NIP / numer podatkowy', 'VAT / tax ID')}</dt><dd>{invoice.taxId}</dd></div><div className="wide"><dt>{t('Adres firmy', 'Company address')}</dt><dd>{invoice.address}</dd></div></dl></div>}
   </section>
+ </>;
+}
+
+export function BookingReviewPayment({quote, lang, mode, busy, accepted, onAccept, onEdit, onLegal, onBook}: Omit<Props, 'details'>) {
+ const t = (pl: string, en: string) => lang === 'pl' ? pl : en;
+ const vehicle = VEHICLE_BY_ID[quote.vehicleId];
+
+ return <>
   <section className="checkout-card checkout-payment" aria-labelledby="checkout-payment-title">
    <div className="details-form-heading"><span>03</span><div><h2 id="checkout-payment-title">{t('Potwierdzenie rezerwacji', 'Confirm your booking')}</h2><p>{t('Jedna cena za cały Twój prywatny przejazd.', 'One price for your entire private transfer.')}</p></div></div>
    <div className="checkout-total"><div><span>{t('Łącznie za transfer', 'Total transfer price')}</span><small>{vehicle.name}{quote.combi ? t(' · kombi', ' · estate') : ''}</small></div><strong>{formatPrice(quote.amount, lang)}</strong></div>
