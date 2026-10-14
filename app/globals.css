@@ -359,6 +359,12 @@
  .home-hero .service-tabs button{font-size:12px}
 }
 
+/* Fill taller desktop windows without changing the mobile composition. */
+@media(min-width:721px){
+ .home-screen .home-hero{display:flex;flex-direction:column;min-height:100dvh}
+ .home-screen .home-hero .landing-layout{flex:1}
+}
+
 /* Passenger details and review share the same wide journey workspace. */
 .details-screen{background:#f6f5f1}
 .details-screen .site-header{height:86px;flex-shrink:0}
