@@ -49,19 +49,19 @@
 /* Mobile booking starts directly below the headline, over the same photograph. */
 .search-label-mobile{display:none}
 @media(max-width:720px){
- .home-hero{background:#172026;padding-bottom:10px;overflow:hidden}
+ .home-hero{--mobile-room:clamp(0px,calc((100dvh - 620px) / 16),12px);display:flex;flex-direction:column;min-height:100svh;min-height:100dvh;background:#172026;padding-bottom:calc(10px + var(--mobile-room));overflow:hidden}
  .home-hero .hero-photo{height:100%;object-position:44% center}
  .home-hero .hero-vignette{background:linear-gradient(180deg,rgba(9,16,22,.68),rgba(9,16,22,.3) 38%,rgba(9,16,22,.55) 100%)}
- .home-hero .landing-layout{grid-template-columns:1fr;gap:0;min-height:0;padding-bottom:8px}
- .home-hero .landing-copy{padding:0 0 10px;min-height:0;max-width:none}
+ .home-hero .landing-layout{display:flex;flex-direction:column;flex:1;gap:0;min-height:0;padding-bottom:calc(8px + var(--mobile-room))}
+ .home-hero .landing-copy{width:100%;flex-shrink:0;padding:0 0 calc(10px + var(--mobile-room));min-height:0;max-width:none}
  .home-hero .service-label,.home-hero .landing-description,.home-hero .landing-footnote{display:none}
- .home-hero .landing-copy h1{font-size:clamp(29px,8.8vw,38px);letter-spacing:-1.3px;line-height:1.12;max-width:none}
- .home-hero .booking-column{max-width:none;margin:0}
+ .home-hero .landing-copy h1{font-size:clamp(29px,min(8.8vw,5.4dvh),38px);letter-spacing:-1.3px;line-height:1.12;max-width:none}
+ .home-hero .booking-column{max-width:none;flex-shrink:0;margin: auto 0}
  .home-hero .service-tabs{display:flex;width:100%;padding:3px;gap:4px;border-radius:12px;background:#fffffff2;border:1px solid #fff8;backdrop-filter:blur(10px);margin-bottom:6px}
  .home-hero .service-tabs button{flex:1;justify-content:center;min-height:42px;padding:10px 8px;font-size:13px;font-weight:550;color:#5d625f;border-radius:8px;white-space:nowrap}
  .home-hero .service-tabs .active{background:#293b3e;color:#f4d6a3}
- .home-hero .trip-form{padding:10px;background:#fff;border:1px solid #e5e4de;border-radius:17px;box-shadow:0 15px 35px #0003;backdrop-filter:none}
- .home-hero .booking-field{min-height:56px;padding:7px 13px;gap:12px;border-radius:11px;background:#fff;border-color:#dedfd8}
+ .home-hero .trip-form{padding:calc(10px + var(--mobile-room));background:#fff;border:1px solid #e5e4de;border-radius:17px;box-shadow:0 15px 35px #0003;backdrop-filter:none}
+ .home-hero .booking-field{min-height:56px;padding:calc(7px + var(--mobile-room)) 13px;gap:12px;border-radius:11px;background:#fff;border-color:#dedfd8}
  .home-hero .booking-field label,.home-hero .booking-field small{font-size:11px;color:#777d72}
  .home-hero .booking-field strong,.home-hero .address-field input{font-size:16px;line-height:1.5;font-weight:500}
  .home-hero .address-field input::placeholder{color:#7d8278}
@@ -72,7 +72,7 @@
  .home-hero .calendar-popup{position:static;margin-top:8px;box-shadow:none;border-color:#dedfd8;border-radius:11px}
  .home-hero .booking-field>svg:first-child{color:#9a9d8f}
  .home-hero .counts-row{gap:8px}
- .home-hero .counter-field{min-height:72px;padding:6px 12px;border-radius:11px;border-color:#dedfd8}
+ .home-hero .counter-field{min-height:72px;padding:calc(6px + var(--mobile-room)) 12px;border-radius:11px;border-color:#dedfd8}
  .home-hero .counter-field>div:first-child{font-size:11px;color:#777d72;gap:6px}
  .home-hero .counter-actions{justify-content:space-between;gap:0;margin-top:7px}
  .home-hero .counter-actions button{width:32px;height:32px;color:#626e64}
@@ -82,8 +82,8 @@
  .home-hero .search-label-desktop{display:none}
  .home-hero .search-label-mobile{display:inline}
  .home-hero .form-reassurance{display:none}
- .home-hero .hero-claims{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 12px;border:0;padding-top:0;text-align:center}
- .home-hero .hero-claims>span{display:inline-flex;justify-content:center;gap:0}
+ .home-hero .hero-claims{display:flex;flex-shrink:0;justify-content:center;flex-wrap:wrap;gap:8px 18px;border:0;padding-top:0;text-align:center}
+ .home-hero .hero-claims>span{display:inline-flex;gap:0}
  .home-hero .hero-claims>span>svg,.home-hero .hero-claims small{display:none}
  .home-hero .hero-claims strong{font-size:10px;line-height:1.6;font-weight:450;color:#e5e6df}
  .home-hero+.service-details{padding-top:31px}
@@ -348,7 +348,7 @@
  .home-screen .locale-button{min-height:44px;font-size:12px;gap:6px}
  .home-screen .currency{display:none}
  .home-screen .help-button{width:44px;height:44px;padding:0;justify-content:center}
- .home-screen .home-hero .landing-layout{padding-top:var(--home-overlay-height);min-height:0}
+ .home-screen .home-hero .landing-layout{padding-top:calc(var(--home-overlay-height) + var(--mobile-room));min-height:0}
  .home-screen .hero-photo{height:100%}
  .home-screen .site-header{background:rgba(10,17,23,.08);border:0;backdrop-filter:none;-webkit-backdrop-filter:none}
 }
