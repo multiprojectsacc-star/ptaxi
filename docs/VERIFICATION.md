@@ -46,8 +46,12 @@ Ponowny build produkcyjny i 21 istniejących testów zaliczone. Zrzut: `outputs/
 
 ## Zakres weryfikacji i wdrożenie
 
-Kod oraz konfiguracja Vercel są gotowe. **Ta migracja nie została jeszcze opublikowana na Vercel**: nie ma połączonego konta ani docelowej zmiennej `DATABASE_URL`. Obecny adres Sites nadal pokazuje wcześniejszą wersję. Nie przenoszono historycznych danych D1 ani danych rzeczywistych klientów.
+Użytkownik opublikował migrację pod `https://ptaxi-olive.vercel.app/` z commitu `702f0e2`. Obecny adres Sites nadal pokazuje wcześniejszą wersję. Nie przenoszono historycznych danych D1 ani danych rzeczywistych klientów.
 
 Po skonfigurowaniu PostgreSQL trzeba zastosować `drizzle/postgres` i sprawdzić wdrożenie z docelową bazą. Nie testowano połączenia z zewnętrzną bazą PostgreSQL, ponieważ nie została udostępniona. Kod blokuje lokalną bazę plikową na Vercel.
+
+Po dodaniu przez użytkownika klucza TomTom `/api/config` zgłasza `mapsMode: live`. Endpointy `/api/locations?q=Opole` i `/api/locations?q=airport` nadal odpowiadają 503 przed wywołaniem TomTom, podczas limitowania zapytań w PostgreSQL. Użytkownik potwierdził, że baza nie została podłączona.
+
+Dodano `npm run build:vercel` jako komendę wdrożenia: sprawdza brakujące zmienne, stosuje migracje i dopiero wtedy uruchamia build Next.js. Brak konfiguracji lub błąd migracji zatrzymuje publikację; wartości sekretów nie trafiają do komunikatów. Osobno sprawdzono odrzucenie brakującej konfiguracji produkcyjnej i niepoprawnego URL bazy.
 
 `DEMO_MODE=true` pozostaje aktywne. Testy P24 stosują atrapy odpowiedzi operatora; nie zastępują próby P24 sandbox. Przed płatnościami produkcyjnymi pozostają konfiguracja P24, Resend, domeny, chronionego ponawiania e-maili i kontrolowana próba operatora płatności.

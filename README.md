@@ -29,11 +29,13 @@ npm start
 1. Zaimportuj projekt do Vercel z ustawieniem Framework: **Next.js**. Katalogiem głównym jest ten folder.
 2. Dodaj bazę PostgreSQL, np. Neon z Vercel Marketplace. Ustaw serwerową zmienną `DATABASE_URL` z połączeniem przez pooler. Na Vercel lokalna baza plikowa jest celowo zablokowana.
 3. Dodaj `TOMTOM_API_KEY`, `DEMO_MODE=true` i `SERVICE_RADIUS_KM=0`. Pozostałe zmienne opisuje `.env.example`. Nie używaj `NEXT_PUBLIC_*` dla sekretów.
-4. Zastosuj migracje: uruchom `npm run db:migrate` z `DATABASE_URL` bazy docelowej. Katalog migracji to `drizzle/postgres`. Nie uruchamiaj migracji historycznego D1 z `docs/legacy-d1`.
-5. Wdróż projekt. `vercel.json` ustawia standardowy build Next.js oraz region Frankfurt.
+4. Wdróż projekt. `vercel.json` uruchamia `npm run build:vercel`: sprawdza obecność konfiguracji, stosuje migracje z `drizzle/postgres` i buduje Next.js. Brak `DATABASE_URL` / `TOMTOM_API_KEY` lub błąd migracji zatrzymuje wdrożenie. Wartości sekretów nie są drukowane.
+5. Tabele powstaną automatycznie podczas wdrożenia — nie trzeba wklejać SQL do panelu bazy. Do ręcznej migracji służy `npm run db:migrate` z docelowym `DATABASE_URL`. Nie uruchamiaj migracji historycznego D1 z `docs/legacy-d1`.
 6. Ustaw `APP_URL` na docelową domenę HTTPS. Do płatności potrzebny jest publicznie dostępny `/api/payments/notify`.
 
 Nie kopiuj `.env.local`, `.dev.vars` ani `.data` do repozytorium. Konfiguracja Vercel i archiwum źródłowe pomijają te pliki. Istniejąca publikacja Sites pozostaje osobną, wcześniejszą wersją; ten projekt jest przygotowany do wdrożenia na Vercel. Dotychczasowe dane D1 nie zostały przeniesione do nowej bazy.
+
+Samo dodanie klucza TomTom nie wystarczy: wyszukiwanie używa PostgreSQL do limitowania zapytań i przechowywania zweryfikowanych adresów. W Vercel otwórz projekt → Storage → Create Database, dodaj integrację Neon/PostgreSQL i połącz bazę z projektem dla Production. Upewnij się, że zmienna nazywa się dokładnie `DATABASE_URL`, bez własnego prefiksu, po czym wykonaj Redeploy.
 
 ## Rezerwacja
 
