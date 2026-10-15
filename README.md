@@ -49,6 +49,16 @@ Wspólny interfejs znajduje się w `components/PersonalTaxi.tsx`; strony App Rou
 
 Każdy transfer ma jeden koniec na Kraków Airport. Wyszukiwanie obejmuje Polskę, bez sztywnego limitu kilometrów. Minimum wyprzedzenia wynosi 16 godzin. Zachowano taryfy, limity pasażerów i bagażu z poprzedniej wersji.
 
+## Wycieczki prywatne
+
+`/travels` to nowy katalog z ofertami `/travels/auschwitz-birkenau`, `/travels/zakopane` i `/travels/wieliczka`. Każda oferta ma osobne kroki `rezerwacja`, `dane` i `podsumowanie`; powrót z płatności prowadzi do `/travels/status?token=…`. `/pl/travels` przekierowuje do polskiego katalogu. Obsługiwane są wersje PL/EN.
+
+Cennik w `lib/tours.ts` zachowuje ceny całego samochodu (Sedan / Premium / Van): Auschwitz 600 / 790 / 890 zł, Zakopane 890 / 990 / 1090 zł, Wieliczka 290 / 320 / 350 zł. Transport obejmuje dojazd, oczekiwanie (odpowiednio 210 / 300 / 180 minut) i powrót. Bilety, przewodnik oraz posiłki nie są wliczone. Zdjęcia pochodzą z materiałów poprzedniego projektu; układ i teksty opracowano na nowo.
+
+Odbiór jest dostępny w Krakowie i gminie Zabierzów, także na lotnisku. To osobny obszar stałych ofert wycieczek, nie ograniczenie transferów lotniskowych. Klient podaje **początek wizyty**, a serwer oblicza wcześniejszy odbiór według rzeczywistej trasy, minimalnego zapasu i czasu przyjazdu przed wejściem. Rezerwacja wymaga min. 16 godzin do odbioru. Godziny powrotu są orientacyjne. Jeśli adres jest jeszcze nieznany, formularz oznacza go jako do ustalenia, a mapę i odbiór szacuje z centrum Krakowa.
+
+Nowy endpoint korzysta z istniejących tabel ofert/rezerwacji, Przelewy24 i kolejki e-maili; nie wymaga dodatkowej migracji. Tryb demonstracyjny i istniejąca konfiguracja płatności pozostają wspólne z transferami.
+
 ## Mapy i płatności
 
 `TOMTOM_API_KEY` włącza rzeczywiste wyszukiwanie adresów i drogową trasę. `DEMO_MODE=true` zapisuje wyłącznie rezerwację testową: bez zamówienia samochodu, płatności i e-maila. Tryby map i płatności są niezależne.
@@ -65,6 +75,6 @@ Przy uruchomionym Next.js, aktywnym kluczu TomTom i `DEMO_MODE=true`:
 TEST_BASE_URL=http://127.0.0.1:5183 npm run test:integration
 ```
 
-Test sprawdza Opole, Ozimską 2, obie strony transferu, kwotę obliczoną przez serwer oraz zapis rezerwacji testowej.
+Test sprawdza Opole, Ozimską 2, obie strony transferu, kwotę obliczoną przez serwer oraz zapis rezerwacji testowej. `TEST_BASE_URL=http://127.0.0.1:5183 npm run test:tours:integration` dodatkowo sprawdza rzeczywisty odbiór w Krakowie, odrzucenie Opola w stałej ofercie wycieczki, trasę, cenę i zapis wycieczki demonstracyjnej. Oba testy odmawiają pracy poza trybem demo.
 
 Kontrakt API: `docs/BACKEND.md`. Reguły odzyskane z pierwotnego kodu: `docs/AUDIT.md`. Dokumenty prawne: `docs/legal-source.md`.

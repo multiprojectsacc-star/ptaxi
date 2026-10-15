@@ -12,6 +12,7 @@ export interface Location {
   lng: number;
   isAirport?: boolean;
   demo?: boolean;
+  municipality?: string;
 }
 
 export interface Vehicle {
@@ -40,6 +41,7 @@ export const AIRPORT: Location = {
   lat: 50.077667,
   lng: 19.784833,
   isAirport: true,
+  municipality: 'Zabierzów',
 };
 
 export const VEHICLES: readonly Vehicle[] = [

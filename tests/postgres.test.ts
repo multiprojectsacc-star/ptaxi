@@ -9,6 +9,9 @@ import {bookings, quotes, emailOutbox} from '../db/schema';
 import {config} from '../lib/server/config';
 import {createQuote, createBooking, getBookingStatus} from '../lib/server/booking-service';
 import {searchLocations, resolveLocation, DEMO_LOCATIONS} from '../lib/server/locations';
+import {createTourQuote} from '../lib/server/tour-service';
+import {TOURS, isTourPickup} from '../lib/tours';
+import {registerPayment} from '../lib/server/payments';
 import {processNotification} from '../lib/server/notification-service';
 import {rateLimit, assertSameOrigin} from '../lib/server/http';
 import {notificationSignFields, sha384, type Notification} from '../lib/server/rules';
@@ -141,4 +144,90 @@ test('Vercel never falls back to a local file database', async () => {
  process.env.VERCEL = '1';
  assert.throws(() => getDb(), /DATABASE_URL/);
  delete process.env.VERCEL;
+});
+
+const tourInput = (slug='wieliczka',vehicleId='sedan') => ({slug,vehicleId,pickupId:'demo-rynek',visitAt:new Date(Date.now()+72*3600000).toISOString(),passengers:2,luggage:0});
+
+test('tour tariffs are fixed per vehicle and ignore client amounts and coordinates', async () => {
+ for(const tour of TOURS){
+  for(const vehicleId of ['sedan','premium','van'] as const){
+   const quote=await createTourQuote({...tourInput(tour.slug,vehicleId),amount:1,to:{id:'forged',lat:0,lng:0}});
+   assert.equal(quote.amount,tour.prices[vehicleId]);
+   assert.equal(quote.to.id,tour.destination.id);
+   assert.equal(quote.from.id,'demo-rynek');
+   assert.equal(quote.kind,'tour');
+   assert.ok(quote.distanceKm>quote.tour.outboundKm);
+   assert.ok(Date.parse(quote.departureAt)<Date.parse(quote.tour.visitAt));
+  }
+ }
+ await assert.rejects(createTourQuote(tourInput('unknown')),{code:'TOUR_NOT_FOUND'});
+ await assert.rejects(createTourQuote({...tourInput(),passengers:5}),{code:'CAPACITY'});
+ assert.equal((await createTourQuote({...tourInput('wieliczka','van'),passengers:8,luggage:7})).amount,35000);
+});
+
+test('tour pickup filtering does not constrain airport transfers or trust client municipality',async t=>{
+ const c={...config(),mapsMode:'live' as const,tomtomKey:'test-key'};
+ t.mock.method(globalThis,'fetch',async()=>Response.json({results:[
+  {id:'tour-search-krakow',position:{lat:50.06,lon:19.93},address:{countryCode:'PL',municipality:'Kraków',freeformAddress:'Hotel, Kraków'}},
+  {id:'tour-search-zabierzow',position:{lat:50.11,lon:19.79},address:{countryCode:'PL',municipality:'Zabierzów',freeformAddress:'Krakowska, Zabierzów'}},
+  {id:'tour-search-opole',position:{lat:50.66,lon:17.92},address:{countryCode:'PL',municipality:'Opole',freeformAddress:'Ozimska, Opole'}}
+ ]}));
+ assert.equal((await searchLocations('adres',c,'tour')).length,2);
+ assert.equal((await searchLocations('adres',c)).length,3);
+ assert.equal(isTourPickup(await resolveLocation('tour-search-opole',c)),false);
+ assert.equal((await searchLocations('airport',c,'tour'))[0].isAirport,true);
+ await assert.rejects(createTourQuote({...tourInput(),pickupId:'demo-wieliczka',municipality:'Kraków'}),{code:'TOUR_OUTSIDE_AREA'});
+ assert.equal((await createTourQuote({...tourInput(),pickupId:'krakow-airport'})).from.isAirport,true);
+});
+
+test('tour pickup handles midnight and driving time, and checks lead time before pickup',async()=>{
+ const visit='2031-06-12T00:30:00+02:00';
+ const quote=await createTourQuote({...tourInput('auschwitz-birkenau'),visitAt:visit});
+ assert.equal(quote.departureAt,'2031-06-11T20:30:00.000Z');
+ const mountains=await createTourQuote(tourInput('zakopane'));
+ assert.equal((Date.parse(mountains.tour.visitAt)-Date.parse(mountains.departureAt))/60000,165);
+ await assert.rejects(createTourQuote({...tourInput('zakopane'),visitAt:new Date(Date.now()+17*3600000).toISOString()}),{code:'LEAD_TIME'});
+});
+
+test('unknown pickup remains explicit and tour booking persists without charging or sending mail in demo',async()=>{
+ const quote=await createTourQuote({...tourInput(),pickupId:undefined,pickupPending:true});
+ assert.equal(quote.tour.pickupPending,true);
+ assert.equal(quote.from.id,'krakow-pickup-pending');
+ const booking=await createBooking(bookingInput(quote.quoteId));
+ assert.equal(booking.paymentUrl,null);
+ const status=await getBookingStatus(booking.statusToken);
+ assert.equal(status.kind,'tour');assert.equal(status.tour?.slug,'wieliczka');
+ assert.equal(status.tour?.pickupPending,true);assert.equal(status.status,'demo');
+ assert.equal(status.amount,29000);assert.equal(status.emailSent,false);
+ await assert.rejects(createQuote({...quoteInput(),direction:'tour'}));
+});
+
+test('payment return URL is selected by the server for tours and defaults to the airport flow',async t=>{
+ const urls:string[]=[];
+ t.mock.method(globalThis,'fetch',async(_url:unknown,init?:RequestInit)=>{urls.push(JSON.parse(String(init?.body)).urlReturn);return Response.json({responseCode:0,data:{token:'test-token'}});});
+ const c={...config(),p24Crc:'test-crc',p24Key:'test-key',merchantId:100,posId:101,appUrl:'https://example.com'};
+ const booking={id:'test',sessionId:'test-session',amount:29000,currency:'PLN',email:'test@example.com',customerName:'Test Passenger',locale:'pl' as const};
+ await registerPayment({...booking,returnPath:'/travels/status'},'test-token',c);
+ await registerPayment(booking,'test-token',c);
+ assert.equal(urls[0],'https://example.com/travels/status?token=test-token');
+ assert.equal(urls[1],'https://example.com/rezerwacja/status?token=test-token');
+});
+
+test('paid tour callback sends one complete return itinerary to customer and operator using mocked providers',async t=>{
+ const quote=await createTourQuote({...tourInput('auschwitz-birkenau'),pickupPending:true,pickupId:undefined});
+ const booking=await createBooking(bookingInput(quote.quoteId));
+ const db=getDb();await db.update(bookings).set({mode:'live',status:'pending'}).where(eq(bookings.id,booking.bookingId));
+ const [row]=await db.select().from(bookings).where(eq(bookings.id,booking.bookingId));
+ const c={...config(),mode:'live' as const,merchantId:100,posId:101,p24Crc:'test-crc',p24Key:'test-key',resendKey:'test-key',emailFrom:'test@example.com',operationsEmail:'ops@example.com'};
+ const notification:Notification={merchantId:100,posId:101,sessionId:row.sessionId,amount:row.amount,originAmount:row.amount,currency:'PLN',orderId:99999,methodId:25,statement:'TEST',sign:''};
+ notification.sign=await sha384(JSON.stringify(notificationSignFields(notification,c.p24Crc)));
+ const sent:{subject:string;text:string}[]=[];
+ t.mock.method(globalThis,'fetch',async(url:unknown,init?:RequestInit)=>{
+  if(String(url).endsWith('/transaction/verify'))return Response.json({responseCode:0,data:{status:'success'}});
+  assert.equal(String(url),'https://api.resend.com/emails');sent.push(JSON.parse(String(init?.body)));return Response.json({id:'mock-mail-'+sent.length});
+ });
+ await processNotification(notification,c);await processNotification(notification,c);
+ assert.equal(sent.length,2);
+ for(const mail of sent){assert.match(mail.subject,/opłacona wycieczka/);assert.match(mail.text,/Auschwitz-Birkenau/);assert.match(mail.text,/Wyjazd w drogę powrotną/);assert.match(mail.text,/dokładny adres odbioru/);assert.match(mail.text,/bilety osobno/);assert.match(mail.text,/600.00 PLN/);}
+ assert.equal((await getBookingStatus(booking.statusToken)).emailSent,true);
 });

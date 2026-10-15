@@ -6,13 +6,15 @@ import { config, requireLiveConfig } from "./config";
 import { resolveLocation, calculateRoute } from "./locations";
 import { ApiError, quoteSchema, bookingSchema, assertLeadTime, assertPassengerCapacity, assertServiceArea, sha384, type QuoteInput, type BookingInput } from "./rules";
 import { registerPayment } from "./payments";
+import type {TourQuote} from "@/lib/tours";
 
 export type StoredQuote = QuoteInput & {
+  kind?:"transfer";
   quoteId:string;expiresAt:number;mode:"demo"|"live";mapsMode:"demo"|"live";mapProvider:"demo"|"tomtom";distanceKm:number;durationMinutes:number;amount:number;
   from:Location;to:Location;routePoints:[number,number][];radiusKm:number;
   offers:{vehicleId:string;amount:number;available:boolean}[];
 };
-export type StoredBooking = { quote:StoredQuote;customer:BookingInput["customer"];flightNumber:string;notes:string;unusualItems:string;invoice:BookingInput["invoice"];locale:"pl"|"en";termsAcceptedAt:string;termsVersion:string };
+export type StoredBooking = { quote:StoredQuote|TourQuote;customer:BookingInput["customer"];flightNumber:string;notes:string;unusualItems:string;invoice:BookingInput["invoice"];locale:"pl"|"en";termsAcceptedAt:string;termsVersion:string };
 
 export async function createQuote(raw:unknown){
   const input=quoteSchema.parse(raw);
@@ -35,7 +37,7 @@ export async function createBooking(raw:unknown){
   const db=getDb();
   const [row]=await db.select().from(quotes).where(eq(quotes.id,input.quoteId)).limit(1);
   if(!row||row.expiresAt<Date.now()||row.mode!==c.mode)throw new ApiError(410,"QUOTE_EXPIRED","Oferta wygasła. Wyznacz trasę ponownie, aby odświeżyć cenę.");
-  const quote=JSON.parse(row.payload) as StoredQuote;
+  const quote=JSON.parse(row.payload) as StoredQuote|TourQuote;
   assertLeadTime(quote.departureAt);
   const [existing]=await db.select({id:bookings.id}).from(bookings).where(eq(bookings.quoteId,input.quoteId)).limit(1);
   if(existing)throw new ApiError(409,"ALREADY_BOOKED","Ta oferta została już wykorzystana. Sprawdź status rezerwacji lub wyznacz trasę ponownie.");
@@ -54,7 +56,7 @@ export async function createBooking(raw:unknown){
   }
   if(c.mode==="demo")return{bookingId:id,status,statusToken,paymentUrl:null,mode:c.mode};
   try{
-    const payment=await registerPayment({id,sessionId,amount:row.amount,currency:row.currency,email:input.customer.email,customerName:`${input.customer.firstName} ${input.customer.lastName}`,locale:input.locale},statusToken,c);
+    const payment=await registerPayment({id,sessionId,amount:row.amount,currency:row.currency,email:input.customer.email,customerName:`${input.customer.firstName} ${input.customer.lastName}`,locale:input.locale,returnPath:quote.kind==="tour"?"/travels/status":"/rezerwacja/status"},statusToken,c);
     await db.update(bookings).set({providerToken:payment.token}).where(eq(bookings.id,id));
     return {bookingId:id,status,statusToken,paymentUrl:payment.paymentUrl,mode:c.mode};
   }catch(error){
@@ -70,5 +72,5 @@ export async function getBookingStatus(token:string){
   if(!row)throw new ApiError(404,"NOT_FOUND","Nie znaleziono rezerwacji.");
   const payload=JSON.parse(row.payload) as StoredBooking;
   const [mail]=await db.select({status:emailOutbox.status}).from(emailOutbox).where(eq(emailOutbox.id,`${row.id}:customer`)).limit(1);
-  return{bookingId:row.id,status:row.status==="verifying"?"pending":row.status,mode:row.mode,amount:row.amount,currency:row.currency,from:payload.quote.from,to:payload.quote.to,departureAt:payload.quote.departureAt,vehicleId:payload.quote.vehicleId,emailSent:mail?.status==="sent",distanceKm:payload.quote.distanceKm,durationMinutes:payload.quote.durationMinutes,passengers:payload.quote.passengers,luggage:payload.quote.luggage,combi:payload.quote.combi};
+  return{kind:payload.quote.kind||"transfer",tour:payload.quote.kind==="tour"?payload.quote.tour:undefined,bookingId:row.id,status:row.status==="verifying"?"pending":row.status,mode:row.mode,amount:row.amount,currency:row.currency,from:payload.quote.from,to:payload.quote.to,departureAt:payload.quote.departureAt,vehicleId:payload.quote.vehicleId,emailSent:mail?.status==="sent",distanceKm:payload.quote.distanceKm,durationMinutes:payload.quote.durationMinutes,passengers:payload.quote.passengers,luggage:payload.quote.luggage,combi:payload.quote.combi};
 }

@@ -15,7 +15,8 @@
     "test": "node --conditions=react-server --import tsx --test tests/backend.test.ts tests/postgres.test.ts",
     "test:integration": "node tests/live-maps.integration.mjs",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "node --import tsx scripts/migrate.ts"
+    "db:migrate": "node --import tsx scripts/migrate.ts",
+    "test:tours:integration": "node tests/live-tours.integration.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

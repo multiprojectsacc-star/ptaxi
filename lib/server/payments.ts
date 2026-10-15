@@ -2,11 +2,11 @@ import type { Config } from "./config";
 import { ApiError, notificationSignFields, secureEqual, sha384, registrationSign, verificationSign, providerPaymentMatches, type Notification } from "./rules";
 
 function authorization(c:Config){return `Basic ${btoa(`${c.posId}:${c.p24Key}`)}`;}
-export async function registerPayment(booking:{id:string;sessionId:string;amount:number;currency:string;email:string;customerName:string;locale:"pl"|"en"},statusToken:string,c:Config){
+export async function registerPayment(booking:{id:string;sessionId:string;amount:number;currency:string;email:string;customerName:string;locale:"pl"|"en";returnPath?:"/travels/status"|"/rezerwacja/status"},statusToken:string,c:Config){
   const sign=await registrationSign(booking.sessionId,c.merchantId,booking.amount,booking.currency,c.p24Crc!);
   const response=await fetch(`${c.p24Base}/api/v1/transaction/register`,{
     method:"POST",headers:{"Content-Type":"application/json",Authorization:authorization(c)},signal:AbortSignal.timeout(15_000),
-    body:JSON.stringify({merchantId:c.merchantId,posId:c.posId,sessionId:booking.sessionId,amount:booking.amount,currency:booking.currency,description:`Personal Taxi — ${booking.id}`,email:booking.email,client:booking.customerName.slice(0,40),country:"PL",language:booking.locale,urlReturn:`${c.appUrl}/rezerwacja/status?token=${encodeURIComponent(statusToken)}`,urlStatus:`${c.appUrl}/api/payments/notify`,timeLimit:30,encoding:"UTF-8",sign}),
+    body:JSON.stringify({merchantId:c.merchantId,posId:c.posId,sessionId:booking.sessionId,amount:booking.amount,currency:booking.currency,description:`Personal Taxi — ${booking.id}`,email:booking.email,client:booking.customerName.slice(0,40),country:"PL",language:booking.locale,urlReturn:`${c.appUrl}${booking.returnPath||"/rezerwacja/status"}?token=${encodeURIComponent(statusToken)}`,urlStatus:`${c.appUrl}/api/payments/notify`,timeLimit:30,encoding:"UTF-8",sign}),
   });
   const data=await response.json() as {data?:{token?:string};responseCode?:number};
   if(!response.ok||data.responseCode!==0||!data.data?.token)throw new ApiError(502,"PAYMENT_UNAVAILABLE","Nie udało się uruchomić płatności. Żadna opłata nie została pobrana przez stronę.");

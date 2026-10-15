@@ -12,7 +12,7 @@ const project = (lat: number, lng: number, z: number) => {
 };
 const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
 
-export default function RouteMap({quote, lang = 'pl', expanded = false}: {quote: Quote; lang?: Locale; expanded?: boolean}) {
+export default function RouteMap({quote, lang = 'pl', expanded = false}: {quote: Pick<Quote,'quoteId'|'from'|'to'|'routePoints'|'mapsMode'|'distanceKm'|'durationMinutes'>; lang?: Locale; expanded?: boolean}) {
  const ref = useRef<HTMLDivElement>(null);
  const drag = useRef<{x: number; y: number} | null>(null);
  const [size, setSize] = useState({width: 320, height: 190});

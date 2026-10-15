@@ -11,6 +11,7 @@ import VehicleSelection from '@/components/booking/VehicleSelection';
 import DetailsJourney from '@/components/booking/DetailsJourney';
 import BookingReview, {BookingReviewPayment} from '@/components/booking/BookingReview';
 import PhoneField from '@/components/booking/PhoneField';
+import SiteMenu from '@/components/SiteMenu';
 
 const initialTrip:Trip={direction:'from-airport',location:null,departure:'',passengers:2,luggage:2};
 type BookingResult={bookingId:string;status:string;statusToken:string;paymentUrl:string|null;mode:'demo'|'live'};
@@ -47,6 +48,7 @@ export default function PersonalTaxi(){
     if(saved.lang==='en')setLang('en');
    }
   }catch{}
+  const requestedLang=new URLSearchParams(window.location.search).get('lang');if(requestedLang==='en'||requestedLang==='pl')setLang(requestedLang);
   setReady(true);
   request<{mode:'demo'|'live'}>('/api/config').then(c=>{setMode(c.mode);}).catch(()=>{});
   const token=new URLSearchParams(window.location.search).get('token');
@@ -128,6 +130,7 @@ export default function PersonalTaxi(){
     <a className="brand" href="/" onClick={e=>{e.preventDefault();if(!busy)editRoute();}} aria-label="Personal Taxi — strona główna"><img src="/images/logo-transparent.png" alt="Personal Taxi"/><span className="brand-divider"/><span className="brand-location">KRAKÓW AIRPORT</span></a>
     {stage>=1&&stage<=3&&<nav className="vehicle-header-steps" aria-label={t('Etapy rezerwacji','Booking steps')}>{[t('Samochód','Vehicle'),t('Twoje dane','Your details'),t('Potwierdzenie','Confirmation')].map((name,i)=><span key={name} aria-current={i===stage-1?'step':undefined}><small>0{i+1}</small>{name}</span>)}</nav>}
     <div className="header-actions">
+     {stage===0&&<SiteMenu lang={lang}/>}
      <button className="locale-button" onClick={()=>setLang(lang==='pl'?'en':'pl')} aria-label={t('Switch to English','Przełącz na polski')}><Globe2 size={17}/><span>{lang.toUpperCase()}</span><span className="currency">PLN</span><ChevronDown size={13}/></button>
      <div className="help-control"><button className="help-button" aria-expanded={help} onClick={()=>setHelp(!help)}><Headphones size={17}/>{t('Potrzebujesz pomocy?','Need help?')}<ChevronDown size={13}/></button>{help&&<div className="help-menu"><strong>{t('Porozmawiajmy o Twojej podróży','Let’s talk about your journey')}</strong><a href="tel:+48690048080"><Phone size={17}/>+48 690 04 80 80</a><a href="mailto:office@personaltaxi.pl"><Mail size={17}/>office@personaltaxi.pl</a></div>}</div>
     </div>

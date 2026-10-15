@@ -58,3 +58,12 @@ Rate limiting uses PostgreSQL counters keyed by hashed Vercel client IP and minu
 - TomTom fuzzy search: https://docs.tomtom.com/search-api/documentation/search-service/fuzzy-search
 - TomTom route calculation: https://docs.tomtom.com/routing-api/documentation/tomtom-maps/v1/calculate-route
 - Resend idempotency: https://resend.com/docs/dashboard/emails/idempotency-keys
+
+## Private day trips
+
+- `GET /api/locations?q=…&scope=tour` returns only canonical pickup addresses in Kraków or Zabierzów municipality, plus Kraków Airport. The default scope remains Poland-wide airport transfers. Municipality comes from TomTom, never a submitted client field.
+- `POST /api/tours/quote`: `{slug,pickupId?,pickupPending?:boolean,visitAt:ISO,vehicleId,passengers,luggage?}`. `visitAt` means the start of the visit. Requires a cached canonical pickup or explicit pending address, verifies capacity and pickup lead time, calculates outward and return routes, and persists the fixed tariff as integer grosz. Unknown pickup uses a clearly identified central-Kraków estimate. Neither client amount nor destination is accepted.
+- The quote carries `kind:"tour"`, `direction:"tour"`, a `tour` snapshot (name, visit time, waiting time, return times and route estimates), plus the common quote fields. `departureAt` is the computed pickup; `distanceKm` and `durationMinutes` cover the whole outing; `routePoints` shows the outward route. Prices and service durations are versioned in the saved JSON snapshot, not recalculated from mutable browser state.
+- Existing `POST /api/bookings` loads either quote type from PostgreSQL. Tour P24 returns use `/travels/status`; airport returns are unchanged. Signed verification and the outbox are shared. Status responses add `kind` and optional `tour`. Demo never registers payments or sends messages.
+
+Tour factual references: https://www.auschwitz.org/en/visiting/ (visitor entrance at Więźniów Oświęcimia 55; reserve named entry passes separately), https://www.kopalnia.pl/turysta-indywidualny/informacje-praktyczne/wazne-informacje/trasa-turystyczna (Daniłowicz Shaft, guided Tourist Route), https://www.zakopane.pl/en/tourist-area (visitor information). Destination addresses were geocoded separately from the old data.
