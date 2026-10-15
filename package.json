@@ -12,7 +12,7 @@
     "start": "next start",
     "lint": "eslint app components lib db --ignore-pattern components/ui",
     "typecheck": "tsc --noEmit",
-    "test": "node --conditions=react-server --import tsx --test tests/backend.test.ts tests/postgres.test.ts",
+    "test": "node --conditions=react-server --import tsx --test tests/backend.test.ts tests/postgres.test.ts tests/legal.test.ts",
     "test:integration": "node tests/live-maps.integration.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --import tsx scripts/migrate.ts",

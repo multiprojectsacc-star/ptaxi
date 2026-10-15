@@ -1,12 +1,13 @@
 'use client';
 
+import Link from 'next/link';
 import {ArrowLeft, ArrowRight, Info, LoaderCircle, LockKeyhole, Mail, Pencil, Phone} from 'lucide-react';
 import {VEHICLE_BY_ID, formatPrice, type Locale} from '@/lib/booking';
 import type {PassengerDetails, Quote} from '@/lib/client/booking';
 
 type Props = {
  quote: Quote; details: PassengerDetails; lang: Locale; mode: 'demo' | 'live'; busy: boolean; accepted: boolean;
- onAccept: (value: boolean) => void; onEdit: () => void; onLegal: (document: 'terms' | 'privacy') => void; onBook: () => void;
+ onAccept: (value: boolean) => void; onEdit: () => void; onBook: () => void;
 };
 
 export default function BookingReview({quote, details, lang, busy, onEdit}: Pick<Props, 'quote' | 'details' | 'lang' | 'busy' | 'onEdit'>) {
@@ -34,7 +35,7 @@ export default function BookingReview({quote, details, lang, busy, onEdit}: Pick
  </>;
 }
 
-export function BookingReviewPayment({quote, lang, mode, busy, accepted, onAccept, onEdit, onLegal, onBook}: Omit<Props, 'details'>) {
+export function BookingReviewPayment({quote, lang, mode, busy, accepted, onAccept, onEdit, onBook}: Omit<Props, 'details'>) {
  const t = (pl: string, en: string) => lang === 'pl' ? pl : en;
  const vehicle = VEHICLE_BY_ID[quote.vehicleId];
 
@@ -43,7 +44,7 @@ export function BookingReviewPayment({quote, lang, mode, busy, accepted, onAccep
    <div className="details-form-heading"><span>03</span><div><h2 id="checkout-payment-title">{t('Potwierdzenie rezerwacji', 'Confirm your booking')}</h2><p>{t('Jedna cena za cały Twój prywatny przejazd.', 'One price for your entire private transfer.')}</p></div></div>
    <div className="checkout-total"><div><span>{t('Łącznie za transfer', 'Total transfer price')}</span><small>{vehicle.name}{quote.combi ? t(' · kombi', ' · estate') : ''}</small></div><strong>{formatPrice(quote.amount, lang)}</strong></div>
    {mode === 'demo' && <div className="demo-information"><Info size={19}/><div><strong>{t('Rezerwacja testowa', 'Test booking')}</strong><p>{t('Adres i trasa są rzeczywiste. Zapis tej rezerwacji służy testowi i nie zamawia przejazdu ani nie obciąża płatnością.', 'The address and route are real. This booking is saved for testing and does not order a transfer or take payment.')}</p></div></div>}
-   <label className="checkbox-row terms-consent"><input type="checkbox" checked={accepted} disabled={busy} onChange={e => onAccept(e.target.checked)}/><span>{t('Akceptuję', 'I accept the')} <button type="button" onClick={() => onLegal('terms')}>{t('regulamin', 'terms')}</button> {t('i zapoznałem/am się z', 'and have read the')} <button type="button" onClick={() => onLegal('privacy')}>{t('polityką prywatności', 'privacy policy')}</button>.</span></label>
+   <label className="checkbox-row terms-consent"><input type="checkbox" checked={accepted} disabled={busy} onChange={e => onAccept(e.target.checked)}/><span>{t('Akceptuję', 'I accept the')} <Link href={'/regulamin?lang='+lang} target="_blank" rel="noopener noreferrer">{t('regulamin', 'terms')}</Link> {t('i zapoznałem/am się z', 'and have read the')} <Link href={'/rodo?lang='+lang} target="_blank" rel="noopener noreferrer">{t('polityką prywatności', 'privacy policy')}</Link>.</span></label>
    <button className="button checkout-submit" type="button" disabled={!accepted || busy} onClick={onBook}>{busy ? <><LoaderCircle className="spin" size={18}/>{t('Przygotowuję rezerwację…', 'Preparing your booking…')}</> : <>{mode === 'demo' ? t('Zapisz rezerwację testową', 'Save test booking') : t('Rezerwuję i płacę', 'Book and pay')}<ArrowRight size={19}/></>}</button>
    <div className="secure-payment"><LockKeyhole size={14}/>{mode === 'demo' ? t('Podgląd płatności', 'Payment preview') : t('Płatność obsługiwana przez', 'Payment handled by')} <b>Przelewy<span>24</span></b></div>
   </section>

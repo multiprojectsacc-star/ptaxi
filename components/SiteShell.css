@@ -1,0 +1,16 @@
+.site-chrome{position:relative;display:flex;flex-direction:column;min-height:100dvh;background:#fff}
+.site-chrome>.site-footer{margin-top:auto}
+.site-chrome .site-footer nav{flex-wrap:wrap}
+.document-header{height:91px;background:#0c0c0c}
+.document-header .header-inner{width:min(1240px,calc(100% - 80px))}
+@media(max-width:1000px){.document-header .brand-divider,.document-header .brand-location{display:none}}
+@media(max-width:600px){
+ .document-header{height:52px}
+ .document-header .header-inner{width:calc(100% - 32px);gap:14px}
+ .document-header .brand img{width:132px;height:44px}
+ .document-header .header-actions{gap:10px}
+ .document-header .locale-button{min-height:44px;font-size:12px;gap:6px}
+ .document-header .currency,.document-header .help-control{display:none}
+ .site-chrome .site-footer .container{gap:20px}
+ .site-chrome .site-footer nav{gap:13px 18px}
+}

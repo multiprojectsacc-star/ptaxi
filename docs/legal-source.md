@@ -19,6 +19,16 @@ Usunięto wyłącznie znaczniki JSX/HTML, wcięcia i techniczne łamanie wierszy
 - W źródłach występują różne adresy kontaktowe: stopka podaje `biuro@inter-dywiz.pl`, a regulamin między innymi `biuro@personaltaxi.pl`. Nie scalono ich arbitralnie w jeden nowy adres.
 - Odzyskanie tekstów nie jest potwierdzeniem ich aktualności ani zgodności z nowym sposobem realizacji rezerwacji. Przed produkcyjnym uruchomieniem właściciel powinien dostarczyć zatwierdzone, spójne wersje PL i EN dla rzeczywistej usługi.
 
+## Publikacja podstron — 15 października 2026
+
+Właściciel polecił opublikować istniejące teksty, w tym dotychczasowe zasady odwołania i zwrotów. Potwierdził administratora: **Inter-Dywiz sp. z o.o., ul. Lotnicza 6/2, 31-462 Kraków, NIP 6751496482**, oraz kontakt **office@personaltaxi.pl**.
+
+Podstrony `/regulamin` i `/rodo` korzystają z pełnych tekstów źródłowych. `lib/legal-documents.ts` podmienia jedynie adresy `biuro@personaltaxi.pl` i `biuro@inter-dywiz.pl` na zatwierdzony adres `office@personaltaxi.pl`. Sam plik JSON pozostaje niezmieniony. Nie wprowadzono nowych zasad anulowania, zwrotów, reklamacji ani okresów przechowywania danych.
+
+Nagłówki i spis treści ujednolicono dla czytelności. W angielskiej polityce prywatności uzupełniono wyłącznie brakujące etykiety nawigacyjne trzech części; akapity i ich numeracja są zachowane. Angielski regulamin zawiera jawną informację o niepełnym tłumaczeniu i link do pełnej wersji polskiej. Testy `tests/legal.test.ts` porównują wszystkie akapity obu dokumentów w obu językach z treścią źródłową, dopuszczając tylko zatwierdzoną zmianę adresu e-mail i formatowanie białych znaków.
+
+Publikacja istniejących dokumentów nie potwierdza ich aktualności prawnej. Nadal wymagają przeglądu opisy funkcji nieobecnych w nowym serwisie, dostawców i transferów danych, zasad odstąpienia przy przewozie osób oraz kompletność i zgodność tłumaczenia EN. Nie dodano fikcyjnych oświadczeń o zgodności z RODO ani nie zmieniono merytorycznie dokumentów bez decyzji właściciela.
+
 ## Wykorzystanie w interfejsie
 
 Teksty można wyświetlić jako zwykły tekst z zachowaniem akapitów. Nie wymagają renderowania HTML ani `dangerouslySetInnerHTML`. Import:

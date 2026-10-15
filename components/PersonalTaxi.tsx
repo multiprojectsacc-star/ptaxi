@@ -1,7 +1,8 @@
 'use client';
 
 import {useEffect,useState} from 'react';
-import {ArrowRight,ArrowLeft,ArrowUpRight,Plane,MapPin,CalendarDays,Users,Luggage,ShieldCheck,Clock3,Headphones,Globe2,ChevronDown,ChevronRight,Check,Plus,Minus,Phone,Mail,X,LoaderCircle,CheckCircle2,LockKeyhole,Info,CarFront,Route,CircleHelp} from 'lucide-react';
+import Link from 'next/link';
+import {ArrowRight,ArrowLeft,ArrowUpRight,Plane,MapPin,CalendarDays,Users,Luggage,ShieldCheck,Clock3,Headphones,Globe2,ChevronDown,ChevronRight,Check,Plus,Minus,Phone,Mail,LoaderCircle,CheckCircle2,LockKeyhole,Info,CarFront,Route,CircleHelp} from 'lucide-react';
 import {AIRPORT,VEHICLES,VEHICLE_BY_ID,formatPrice,type Locale,type VehicleId} from '@/lib/booking';
 import {request,localWarsaw,warsawISO,displayDate,emptyDetails,type Trip,type Quote,type PassengerDetails,type BookingStatus} from '@/lib/client/booking';
 import AddressInput from '@/components/booking/AddressInput';
@@ -32,7 +33,6 @@ export default function PersonalTaxi(){
  const [status,setStatus]=useState<BookingStatus|null>(null);
  const [result,setResult]=useState<BookingResult|null>(null);
  const [help,setHelp]=useState(false);
- const [legal,setLegal]=useState<'terms'|'privacy'|null>(null);
  const t=(pl:string,en:string)=>lang==='pl'?pl:en;
 
  useEffect(()=>{
@@ -61,12 +61,7 @@ export default function PersonalTaxi(){
  useEffect(()=>{document.documentElement.lang=lang;},[lang]);
  useEffect(()=>{setAcceptTerms(false);},[trip,vehicleId,combi]);
  useEffect(()=>{window.scrollTo({top:0,behavior:'auto'});},[stage]);
- useEffect(()=>{
-  if(!legal)return;
-  const before=document.body.style.overflow;document.body.style.overflow='hidden';
-  const close=(e:KeyboardEvent)=>{if(e.key==='Escape')setLegal(null);};window.addEventListener('keydown',close);
-  return()=>{document.body.style.overflow=before;window.removeEventListener('keydown',close);};
- },[legal]);
+
 
  function goStage(next:number){const paths=['/','/rezerwacja/samochod','/rezerwacja/dane','/rezerwacja/podsumowanie'];if(next<4&&window.location.pathname!==paths[next])window.history.pushState({},'',paths[next]);setStage(next);}
  useEffect(()=>{const pop=()=>{const path=window.location.pathname;setStage(path.endsWith('/samochod')?1:path.endsWith('/dane')?2:path.endsWith('/podsumowanie')?3:path.endsWith('/status')?4:0);};window.addEventListener('popstate',pop);return()=>window.removeEventListener('popstate',pop);},[]);
@@ -209,12 +204,11 @@ export default function PersonalTaxi(){
     {stage===2?<>
      <div className="details-next-note"><ShieldCheck size={16}/>{t('Sprawdzisz wszystkie dane przed płatnością.','You’ll review all your details before payment.')}</div>
      <div className="screen-actions"><button type="button" className="back-link" disabled={busy} onClick={()=>{goStage(1);setError('');}}><ArrowLeft size={17}/>{t('Wybór samochodu','Vehicle selection')}</button><button type="submit" form="passenger-details" className="button yellow" disabled={busy}>{busy?<LoaderCircle className="spin" size={18}/>:<>{t('Sprawdź rezerwację','Review booking')}<ArrowRight size={18}/></>}</button></div>
-    </>:<BookingReviewPayment quote={quote} lang={lang} mode={mode} busy={busy} accepted={acceptTerms} onAccept={setAcceptTerms} onEdit={()=>{goStage(2);setError('');}} onLegal={setLegal} onBook={()=>void book()}/>}
+    </>:<BookingReviewPayment quote={quote} lang={lang} mode={mode} busy={busy} accepted={acceptTerms} onAccept={setAcceptTerms} onEdit={()=>{goStage(2);setError('');}} onBook={()=>void book()}/>}
     </div>
    </div>}
   </main>}
-  <footer className="site-footer"><div className="container"><div><span>© {new Date().getFullYear()} Personal Taxi</span><small>Inter-Dywiz Sp. z o.o. · NIP 6751496482</small></div><nav aria-label={t('Informacje','Information')}><button onClick={()=>setLegal('terms')}>{t('Regulamin','Terms')}</button><button onClick={()=>setLegal('privacy')}>{t('Prywatność','Privacy')}</button><a href="mailto:office@personaltaxi.pl">{t('Kontakt','Contact')}<ArrowUpRight size={13}/></a></nav><div className="footer-payment"><LockKeyhole size={13}/><span>Przelewy<b>24</b></span></div></div></footer>
-  {legal&&<div className="legal-overlay" onMouseDown={e=>{if(e.target===e.currentTarget)setLegal(null);}}><section role="dialog" aria-modal="true" aria-label={legal==='terms'?t('Regulamin','Terms'):t('Polityka prywatności','Privacy policy')}><button className="close-modal" aria-label={t('Zamknij','Close')} onClick={()=>setLegal(null)}><X size={21}/></button><span className="section-kicker">PERSONAL TAXI</span><h2>{legal==='terms'?t('Warunki rezerwacji','Booking terms'):t('Polityka prywatności','Privacy policy')}</h2><p>{t('Operatorem usługi i administratorem danych jest Inter-Dywiz Sp. z o.o., ul. Lotnicza 6/2, NIP 6751496482. Kontakt: biuro@inter-dywiz.pl.','The service operator and data controller is Inter-Dywiz Sp. z o.o., ul. Lotnicza 6/2, tax ID 6751496482. Contact: biuro@inter-dywiz.pl.')}</p>{legal==='terms'?<><p>{t('Transfer obejmuje przejazd z lub na Kraków Airport. Rezerwacja online wymaga minimum 16 godzin wyprzedzenia. Cena jest przedstawiana przed płatnością. Oczekiwanie w cenie: 60 minut po przylocie albo 15 minut poza lotniskiem.','Transfers run to or from Kraków Airport. Book online at least 16 hours ahead. The fare is shown before payment. Waiting included: 60 minutes after arrival or 15 minutes outside the airport.')}</p><a href="https://www.personaltaxi.pl/terms" target="_blank" rel="noreferrer">{t('Pełny regulamin operatora','Full operator terms')}<ArrowUpRight size={17}/></a></>:<><p>{t('Dane z formularza są wykorzystywane do obsługi rezerwacji, kontaktu dotyczącego transferu i realizacji płatności. Szczegóły podstaw przetwarzania, odbiorców, czasu przechowywania i Twoich praw opisuje pełna polityka operatora.','Form details are used to organise your booking, contact you about your transfer and process payment. The operator’s full policy describes the legal basis, recipients, retention and your rights.')}</p><a href="https://www.personaltaxi.pl/policy" target="_blank" rel="noreferrer">{t('Pełna polityka prywatności','Full privacy policy')}<ArrowUpRight size={17}/></a></>}{mode==='demo'&&<p className="legal-demo">{t('W tym podglądzie płatności są testowe. Zapis rezerwacji nie tworzy umowy przewozu. Korzystaj z przykładowych danych kontaktowych.','Payments in this preview are test payments. Saving a booking does not create a transport contract. Use example contact details.')}</p>}<button className="button yellow" onClick={()=>setLegal(null)}>{t('Rozumiem','Got it')}</button></section></div>}
+  <footer className="site-footer"><div className="container"><div><span>© {new Date().getFullYear()} Personal Taxi</span><small>Inter-Dywiz Sp. z o.o. · NIP 6751496482</small></div><nav aria-label={t('Informacje','Information')}><Link href={'/regulamin?lang='+lang}>{t('Regulamin','Terms')}</Link><Link href={'/rodo?lang='+lang}>{t('RODO','Privacy')}</Link><a href="mailto:office@personaltaxi.pl">{t('Kontakt','Contact')}<ArrowUpRight size={13}/></a></nav><div className="footer-payment"><LockKeyhole size={13}/><span>Przelewy<b>24</b></span></div></div></footer>
  </div>;
 }
 function AirportField({label}:{label:string}){return <div className="booking-field airport-field"><Plane size={21}/><div><small>{label}</small><strong>Kraków Airport <span>KRK</span></strong><p>Balice · terminal pasażerski</p></div><LockKeyhole size={14}/></div>;}
