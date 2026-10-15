@@ -10,7 +10,7 @@ export type Tour = {
 /** Legacy fixed tariffs: integer grosz, whole car, including waiting and return. */
 export const TOURS:readonly Tour[] = [
  {slug:'auschwitz-birkenau',number:'01',title:{pl:'Auschwitz-Birkenau',en:'Auschwitz-Birkenau'},eyebrow:{pl:'Pamięć i historia',en:'Memory & history'},
- intro:{pl:'Podróż do miejsca, które skłania do refleksji.',en:'A journey to a place of remembrance.'},
+ intro:{pl:'Prywatny transport do Miejsca Pamięci, oczekiwanie i powrót do Krakowa.',en:'Private transport to the Memorial, waiting and return to Kraków.'},
  description:{pl:'Prywatny dojazd z Krakowa do Miejsca Pamięci i Muzeum Auschwitz-Birkenau. Kierowca odbierze Cię spod wskazanego adresu, poczeka podczas zwiedzania i odwiezie z powrotem.',en:'Private transport from Kraków to the Auschwitz-Birkenau Memorial and Museum. Your driver collects you from your address, waits during your visit and takes you back.'},
  image:'/images/tours/auschwitz-memorial.png',imageAlt:{pl:'Historyczna brama w Miejscu Pamięci Auschwitz',en:'Historic gate at the Auschwitz Memorial'},
  visitMinutes:210,minimumPickupMinutes:120,arrivalBufferMinutes:30,estimatedTotalMinutes:450,prices:{sedan:60000,premium:79000,van:89000},
@@ -19,7 +19,7 @@ export const TOURS:readonly Tour[] = [
  practical:{pl:'Zarezerwuj imienną kartę wstępu na stronie Muzeum przed zamówieniem transportu. Przy wejściu należy być co najmniej 30 minut przed zwiedzaniem. Bilety i edukator nie są zawarte w cenie transportu.',en:'Reserve your named entry pass on the Museum website before booking transport. Arrive at least 30 minutes before the visit. Entry passes and an educator are not included in the transport price.'},
  officialUrl:'https://www.auschwitz.org/en/visiting/',ticketUrl:'https://visit.auschwitz.org/'},
  {slug:'zakopane',number:'02',title:{pl:'Zakopane i Tatry',en:'Zakopane & the Tatras'},eyebrow:{pl:'Dzień w górach',en:'A day in the mountains'},
- intro:{pl:'Zmień rytm. Spędź dzień u podnóża Tatr.',en:'A change of pace, at the foot of the Tatras.'},
+ intro:{pl:'Przejazd do centrum Zakopanego i 5 godzin na własny plan zwiedzania.',en:'Transport to central Zakopane and 5 hours to explore at your own pace.'},
  description:{pl:'Jednodniowy wyjazd do Zakopanego, w Twoim tempie. Spacer po Krupówkach, regionalny obiad lub widok na Tatry — Ty wybierasz, jak spędzisz czas na miejscu. My zajmujemy się dojazdem i powrotem.',en:'A private day trip to Zakopane, at your own pace. Walk along Krupówki, enjoy a regional lunch or take in the mountain views. You decide how to spend your time; we handle the journey there and back.'},
  image:'/images/tours/zakopane-tatras.png',imageAlt:{pl:'Górska panorama Tatr z drewnianymi schroniskami',en:'Tatra mountain landscape with wooden mountain huts'},
  visitMinutes:300,minimumPickupMinutes:60,arrivalBufferMinutes:15,estimatedTotalMinutes:700,prices:{sedan:89000,premium:99000,van:109000},
@@ -28,7 +28,7 @@ export const TOURS:readonly Tour[] = [
  practical:{pl:'Transport obejmuje dojazd do centrum Zakopanego, oczekiwanie i powrót. Kolejki, atrakcje, przewodnik oraz posiłki są dodatkowo płatne u ich organizatorów. Zdjęcie przedstawia region Tatr; dojazdy do szlaków nie są częścią tej oferty.',en:'Transport includes travel to central Zakopane, waiting and return. Cable cars, attractions, guides and meals are paid separately to their operators. The photograph shows the Tatra region; trailhead transfers are not part of this offer.'},
  officialUrl:'https://www.zakopane.pl/en/tourist-area'},
  {slug:'wieliczka',number:'03',title:{pl:'Kopalnia Soli Wieliczka',en:'Wieliczka Salt Mine'},eyebrow:{pl:'Pod powierzchnią',en:'Beneath the surface'},
- intro:{pl:'Odkryj niezwykły świat ukryty pod miastem.',en:'Discover an extraordinary world beneath the town.'},
+ intro:{pl:'Dojazd do kopalni, 3 godziny na wizytę i powrót pod Twój adres.',en:'Transport to the mine, 3 hours for your visit and return to your address.'},
  description:{pl:'Komfortowy dojazd do Kopalni Soli Wieliczka i spokojny powrót do Krakowa. Kierowca czeka, gdy Ty poznajesz podziemne korytarze, komory i historię solnego miasta.',en:'A comfortable journey to Wieliczka Salt Mine and a relaxed return to Kraków. Your driver waits while you explore the underground corridors, chambers and the history of this salt town.'},
  image:'/images/tours/salt-mine-corridor.png',imageAlt:{pl:'Oświetlony korytarz w kopalni soli',en:'An illuminated corridor in a salt mine'},
  visitMinutes:180,minimumPickupMinutes:40,arrivalBufferMinutes:15,estimatedTotalMinutes:240,prices:{sedan:29000,premium:32000,van:35000},
